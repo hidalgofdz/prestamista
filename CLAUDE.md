@@ -13,7 +13,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Solid Queue / Solid Cache / Solid Cable** — all DB-backed. Do **not** introduce Redis, Sidekiq, or Memcached unless explicitly asked.
 - **Hotwire** (Turbo + Stimulus) over **Importmap**. No Node toolchain. Do **not** propose Webpack, Vite, jsbundling-rails, or cssbundling-rails.
 - **Propshaft** asset pipeline (not Sprockets).
-- **Puma + Thruster** in production; **Kamal** + Docker for deploys (`config/deploy.yml`, `Dockerfile`).
+- **Puma + Thruster** in production; **Railway** + Docker for deploys (`railway.toml`, `Dockerfile`).
 - **rubocop-rails-omakase** for style.
 
 No authentication, authorization, service-object framework, ViewComponent, money-handling, or pagination gems are present. Add them deliberately when a feature requires one — don't assume one is already wired up.
@@ -50,8 +50,9 @@ Lint and security (all run together via `bin/ci`):
 Background jobs:
 - `bin/jobs` — run the Solid Queue worker out-of-process. When `SOLID_QUEUE_IN_PUMA=true` it runs inside Puma instead (see `config/puma.rb`).
 
-Deployment (Kamal):
-- `bin/kamal deploy`, `bin/kamal console`, `bin/kamal logs -f`, `bin/kamal shell`
+Deployment (Railway):
+- Push to `main` or run `railway up` — Railway builds the Dockerfile and deploys automatically.
+- Logs, shell, and console are available in the Railway dashboard or via the `railway` CLI.
 
 ## CI
 
@@ -64,8 +65,25 @@ Deployment (Kamal):
 - New translation keys go in **both** `config/locales/en.yml` and `config/locales/es-MX.yml`. The `rails-i18n` gem already provides Spanish translations for default Rails messages (validations, dates, numbers).
 - `public/404.html`, `422.html`, `500.html` are static (served before Rails boots) so `t()` is unavailable; they're written in Spanish to match the default locale. If a multilingual UI is ever added, replace them with a dynamic `ErrorsController`.
 
+## Deployment (Railway)
+
+Railway builds the `Dockerfile` directly. Behaviour is defined in `railway.toml`.
+
+**Required env vars** (set in the Railway dashboard under the service's Variables tab):
+
+| Variable | How to get it |
+|---|---|
+| `RAILS_MASTER_KEY` | Contents of `config/master.key` (never commit this file) |
+| `DATABASE_URL` | Auto-injected by the Railway Postgres add-on |
+| `SOLID_QUEUE_IN_PUMA` | Set to `true` — runs jobs inside the web Puma process |
+
+All four Solid connections (primary, cache, queue, cable) share the **single** Railway Postgres add-on via `DATABASE_URL`. Do not provision more than one Postgres service unless traffic warrants it.
+
+Migrations run automatically: `bin/docker-entrypoint` calls `db:prepare` on every container start.
+
+**Active Storage warning:** the container filesystem is ephemeral — uploads stored at `:local` will be lost on each deploy. Switch to S3, Cloudflare R2, or a Railway persistent volume before shipping any upload feature.
+
 ## Notes
 
-- `config/deploy.yml` and `.kamal/secrets` configure production deploys — treat as sensitive.
 - The CSP initializer (`config/initializers/content_security_policy.rb`) is fully commented out; uncomment intentionally before relying on it.
 - `bin/docker-entrypoint` runs `db:prepare` automatically on container start.

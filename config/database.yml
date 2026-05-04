@@ -64,18 +64,13 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: prestamista_production
-    username: prestamista
-    password: <%= ENV["PRESTAMISTA_DATABASE_PASSWORD"] %>
+    url: <%= ENV["DATABASE_URL"] %>
   cache:
     <<: *primary_production
-    database: prestamista_production_cache
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
-    database: prestamista_production_queue
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_production
-    database: prestamista_production_cable
     migrations_paths: db/cable_migrate
