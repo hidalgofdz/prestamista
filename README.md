@@ -1,24 +1,26 @@
-# README
+# Prestamista
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+A Rails 8.1 application. Stack and conventions are documented in [CLAUDE.md](CLAUDE.md).
 
-Things you may want to cover:
+## Local development
 
-* Ruby version
+PostgreSQL runs in a Docker container — you do not need a native install.
 
-* System dependencies
+1. Install Docker Desktop (or another Docker engine).
+2. From the project root:
+   ```sh
+   cp .env.example .env       # adjust if you want different credentials
+   docker compose up -d db    # start Postgres 17.5-alpine
+   bin/setup                  # bundle, prepare DB, then start the dev server
+   ```
 
-* Configuration
+`bin/setup` checks that Postgres is reachable and prints a helpful message if Compose isn't up. The database container's data persists in a Docker volume named `pg_data`.
 
-* Database creation
+## Tests
 
-* Database initialization
+```sh
+bin/rails test         # full suite
+bin/rails test:system  # system tests (Capybara)
+```
 
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+See `CLAUDE.md` for the full command reference (lint, security scans, deployment).

@@ -18,10 +18,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 No authentication, authorization, service-object framework, ViewComponent, money-handling, or pagination gems are present. Add them deliberately when a feature requires one — don't assume one is already wired up.
 
+## Database (local development)
+
+PostgreSQL runs in a Docker container, **never natively** on the host. The `db` service is defined in `compose.yml` and pinned to `postgres:17.5-alpine`. Data persists in the `pg_data` named volume.
+
+- Start it: `docker compose up -d db`
+- Stop it: `docker compose down` (data preserved); add `-v` to wipe the volume.
+- Credentials and host/port come from `.env` (gitignored). Copy `.env.example` to bootstrap.
+- `bin/setup` probes the DB and prints a helpful error if the container isn't running, instead of failing on a confusing `pg` connection error.
+- `dotenv-rails` (dev/test only) auto-loads `.env` so `bin/rails ...` commands see the variables without an explicit `dotenv --` prefix.
+
 ## Commands
 
 Development:
-- `bin/setup` — install gems and run `db:prepare`. Add `--reset` to drop and recreate databases.
+- `bin/setup` — install gems, ensure `.env` exists, check Postgres, run `db:prepare`. Add `--reset` to drop and recreate databases.
 - `bin/dev` — start the development server.
 - `bin/rails console`
 

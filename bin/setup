@@ -15,10 +15,25 @@ FileUtils.chdir APP_ROOT do
   puts "== Installing dependencies =="
   system("bundle check") || system!("bundle install")
 
-  # puts "\n== Copying sample files =="
-  # unless File.exist?("config/database.yml")
-  #   FileUtils.cp "config/database.yml.sample", "config/database.yml"
-  # end
+  unless File.exist?(".env")
+    if File.exist?(".env.example")
+      puts "\n== Creating .env from .env.example =="
+      FileUtils.cp ".env.example", ".env"
+    end
+  end
+
+  puts "\n== Checking that Postgres is reachable =="
+  require "socket"
+  host = ENV.fetch("POSTGRES_HOST", "localhost")
+  port = Integer(ENV.fetch("POSTGRES_PORT", "5432"))
+  begin
+    Socket.tcp(host, port, connect_timeout: 5) { |s| s.close }
+  rescue StandardError => e
+    abort <<~MSG
+      Postgres isn't reachable at #{host}:#{port} (#{e.class}: #{e.message}).
+      Start the local container with `docker compose up -d db`, then re-run bin/setup.
+    MSG
+  end
 
   puts "\n== Preparing database =="
   system! "bin/rails db:prepare"
