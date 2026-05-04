@@ -1,24 +1,16 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+# 37signals Rails Configuration
 
 ## Tech Stack
 
-- **Ruby 3.3.4 / Rails 8.1.3** — `config.load_defaults 8.1` is set in `config/application.rb`.
 - **Ruby** 3.3, **Rails** 8.2 (edge), **MySQL** (SaaS) / **SQLite** (OSS)
-- **Frontend:** Hotwire (Turbo 8 + Stimulus 3.2), Importmap (no Node.js, Do **not** propose Webpack, Vite, jsbundling-rails, or cssbundling-rails.)
+- **Frontend:** Hotwire (Turbo 8 + Stimulus 3.2), Importmap (no Node.js)
 - **Testing:** Minitest + Fixtures (not RSpec, not FactoryBot)
 - **Auth:** Custom passwordless: passkeys (WebAuthn) + magic links (no Devise), `has_secure_password` optional
 - **Background Jobs:** Solid Queue (database-backed, no Redis)
 - **Caching:** Solid Cache | **WebSockets:** Solid Cable
 - **IDs:** UUIDv7 everywhere (base36-encoded, 25-char strings)
 - **Assets:** Propshaft + Import Maps (no Node.js, no Webpack)
-- **Deployment:** Puma, Railway and Docker for deploys (`railway.toml`, `Dockerfile`).
-- **PostgreSQL**, one database for`primary`, `queue`, `cache`, and `cable` databases via the Solid stack.
-
-No authentication, authorization, service-object framework, ViewComponent, money-handling, or pagination gems are present. Add them deliberately when a feature requires one — don't assume one is already wired up.
-
-
+- **Deployment:** Kamal 2 + Thruster
 
 ## Architecture
 
@@ -69,11 +61,6 @@ bin/rails db:reset                           # Drop, create, load schema + fixtu
 2. Implement minimal code to make it pass
 3. Refactor while tests stay green
 
-## Deployment (Railway):
-- Push to `main` or run `railway up` — Railway builds the Dockerfile and deploys automatically.
-- Logs, shell, and console are available in the Railway dashboard or via the `railway` CLI.
-
-
 ## Naming Conventions
 
 | Layer | Pattern | Example |
@@ -97,48 +84,3 @@ bin/rails db:reset                           # Drop, create, load schema + fixtu
 - `touch: true` on child associations for cache invalidation
 
 See @../docs/rails-development-principles.md for full development principles.
-
-
-## Project status
-
-`prestamista` is a freshly generated **Rails 8.1** application. The lending domain (the project name is Spanish for *moneylender*) has not been implemented yet: `config/routes.rb` is empty, no models exist beyond `ApplicationRecord`, and `db/schema.rb` has not been generated. Treat almost any file under `app/` as greenfield.
-
-## Database (local development)
-
-PostgreSQL runs in a Docker container, **never natively** on the host. The `db` service is defined in `compose.yml` and pinned to `postgres:17.5-alpine`. Data persists in the `pg_data` named volume.
-
-- Start it: `docker compose up -d db`
-- Stop it: `docker compose down` (data preserved); add `-v` to wipe the volume.
-- Credentials and host/port come from `.env` (gitignored). Copy `.env.example` to bootstrap.
-- `bin/setup` probes the DB and prints a helpful error if the container isn't running, instead of failing on a confusing `pg` connection error.
-- `dotenv-rails` (dev/test only) auto-loads `.env` so `bin/rails ...` commands see the variables without an explicit `dotenv --` prefix.
-
-## CI
-
-`.github/workflows/ci.yml` runs on PRs and pushes to `main` with five jobs: `scan_ruby` (Brakeman + bundler-audit), `scan_js` (importmap audit), `lint` (RuboCop), `test` (Minitest on PostgreSQL), and `system-test` (Capybara — uploads screenshots on failure). `bin/ci` reproduces all of this locally.
-
-## Internationalization
-
-- Default locale is **`es-MX`**; fallback chain is `es-MX → es → en`. Time zone is `Mexico City`.
-- `config.i18n.raise_on_missing_translations = true` is enabled in dev and test — **every user-facing string in views must use `t()`**, or the request will raise. This is the enforcement; do not disable it casually.
-- New translation keys go in **both** `config/locales/en.yml` and `config/locales/es-MX.yml`. The `rails-i18n` gem already provides Spanish translations for default Rails messages (validations, dates, numbers).
-- `public/404.html`, `422.html`, `500.html` are static (served before Rails boots) so `t()` is unavailable; they're written in Spanish to match the default locale. If a multilingual UI is ever added, replace them with a dynamic `ErrorsController`.
-
-**Required env vars** (set in the Railway dashboard under the service's Variables tab):
-
-| Variable | How to get it |
-|---|---|
-| `RAILS_MASTER_KEY` | Contents of `config/master.key` (never commit this file) |
-| `DATABASE_URL` | Auto-injected by the Railway Postgres add-on |
-| `SOLID_QUEUE_IN_PUMA` | Set to `true` — runs jobs inside the web Puma process |
-
-All four Solid connections (primary, cache, queue, cable) share the **single** Railway Postgres add-on via `DATABASE_URL`. Do not provision more than one Postgres service unless traffic warrants it.
-
-Migrations run automatically: `bin/docker-entrypoint` calls `db:prepare` on every container start.
-
-**Active Storage warning:** the container filesystem is ephemeral — uploads stored at `:local` will be lost on each deploy. Switch to S3, Cloudflare R2, or a Railway persistent volume before shipping any upload feature.
-
-## Notes
-
-- The CSP initializer (`config/initializers/content_security_policy.rb`) is fully commented out; uncomment intentionally before relying on it.
-- `bin/docker-entrypoint` runs `db:prepare` automatically on container start.

@@ -35,5 +35,6 @@
 /config/*.key
 
 # Ignore Claude Code local settings (user-specific tool/permission state).
-/.claude/
+.claude/settings.local.json
+CLAUDE.local.md
 
