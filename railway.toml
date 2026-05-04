@@ -3,7 +3,7 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "bin/rails db:prepare && HTTP_PORT=${PORT:-80} ./bin/thrust ./bin/rails server"
+startCommand = "bin/rails db:prepare && HTTP_PORT=${PORT:-3000} TARGET_PORT=3001 ./bin/thrust ./bin/rails server"
 healthcheckPath = "/up"
 healthcheckTimeout = 120
 restartPolicyType = "ON_FAILURE"
