@@ -47,6 +47,13 @@ Deployment (Kamal):
 
 `.github/workflows/ci.yml` runs on PRs and pushes to `main` with five jobs: `scan_ruby` (Brakeman + bundler-audit), `scan_js` (importmap audit), `lint` (RuboCop), `test` (Minitest on PostgreSQL), and `system-test` (Capybara — uploads screenshots on failure). `bin/ci` reproduces all of this locally.
 
+## Internationalization
+
+- Default locale is **`es-MX`**; fallback chain is `es-MX → es → en`. Time zone is `Mexico City`.
+- `config.i18n.raise_on_missing_translations = true` is enabled in dev and test — **every user-facing string in views must use `t()`**, or the request will raise. This is the enforcement; do not disable it casually.
+- New translation keys go in **both** `config/locales/en.yml` and `config/locales/es-MX.yml`. The `rails-i18n` gem already provides Spanish translations for default Rails messages (validations, dates, numbers).
+- `public/404.html`, `422.html`, `500.html` are static (served before Rails boots) so `t()` is unavailable; they're written in Spanish to match the default locale. If a multilingual UI is ever added, replace them with a dynamic `ErrorsController`.
+
 ## Notes
 
 - `config/deploy.yml` and `.kamal/secrets` configure production deploys — treat as sensitive.

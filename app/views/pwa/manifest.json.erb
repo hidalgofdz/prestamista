@@ -1,5 +1,5 @@
 {
-  "name": "Prestamista",
+  "name": <%= t("application.name").to_json %>,
   "icons": [
     {
       "src": "/icon.png",
@@ -16,7 +16,7 @@
   "start_url": "/",
   "display": "standalone",
   "scope": "/",
-  "description": "Prestamista.",
+  "description": <%= t("application.description").to_json %>,
   "theme_color": "red",
   "background_color": "red"
 }
