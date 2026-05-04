@@ -3,7 +3,8 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "bin/rails db:prepare && bin/rails server -b ::"
+preDeployCommand = "bin/rails db:prepare"
+startCommand = "bin/rails server -b ::"
 healthcheckPath = "/up"
 healthcheckTimeout = 120
 restartPolicyType = "ON_FAILURE"
