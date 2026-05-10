@@ -190,10 +190,11 @@ validates :body, presence: true, if: :published?           # Conditional
 ## Callbacks and enums
 
 ```ruby
-# Callbacks: use sparingly, prefer _commit for external effects
+# Callbacks: use sparingly, prefer _commit for external effects and _after_create to set up relations that must be saved on the same transaction
 after_create_commit :broadcast_creation
 before_validation :set_default_status, on: :create
 after_create_commit :notify_recipients_later  # Uses _later convention
+after_create :set_request_default_status  # Internal state change, same transaction
 
 # String enums (preferred for DB readability)
 enum :status, {
