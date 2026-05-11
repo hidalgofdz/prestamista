@@ -39,10 +39,21 @@ class LoansTest < ActionDispatch::IntegrationTest
     assert_select "dd p", /20,000/
   end
 
-  test "lender deletes a loan" do
+  test "lender deletes a loan without payments" do
     loan = loans(:active_loan)
 
     assert_difference "Loan.count", -1 do
+      delete loan_path(loan)
+    end
+
+    assert_redirected_to loans_path
+  end
+
+  test "lender cannot delete a loan with payments" do
+    loan = loans(:active_loan)
+    loan.payments.create!(amount: 100, date: "2026-05-10", account: loan.account)
+
+    assert_no_difference "Loan.count" do
       delete loan_path(loan)
     end
 

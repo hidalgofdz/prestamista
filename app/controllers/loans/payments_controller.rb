@@ -5,7 +5,6 @@ class Loans::PaymentsController < ApplicationController
 
   def create
     @payment = @loan.payments.new(payment_params)
-    @payment.account = @account
 
     if @payment.save
       redirect_to loan_path(@loan)

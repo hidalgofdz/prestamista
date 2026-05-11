@@ -36,8 +36,11 @@ class LoansController < ApplicationController
   end
 
   def destroy
-    @loan.destroy
-    redirect_to loans_path
+    if @loan.destroy
+      redirect_to loans_path
+    else
+      redirect_to loans_path, alert: @loan.errors.full_messages.join(", ")
+    end
   end
 
   private

@@ -37,10 +37,21 @@ class BorrowersTest < ActionDispatch::IntegrationTest
     assert_select "p", /5559999999/
   end
 
-  test "lender deletes a borrower" do
+  test "lender deletes a borrower without loans" do
     borrower = borrowers(:aaron)
+    borrower.loans.destroy_all
 
     assert_difference "Borrower.count", -1 do
+      delete borrower_path(borrower)
+    end
+
+    assert_redirected_to borrowers_path
+  end
+
+  test "lender cannot delete a borrower with loans" do
+    borrower = borrowers(:aaron)
+
+    assert_no_difference "Borrower.count" do
       delete borrower_path(borrower)
     end
 

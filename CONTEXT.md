@@ -17,3 +17,10 @@
 | **Principal payment (extra)** | An additional payment toward the principal balance, beyond the scheduled amount. Reduces the balance immediately, lowering all future interest charges. |
 | **Loans page** | Flat list of all loans across all borrowers for the lender's account. Each row shows: borrower name, amount, and start date. |
 | **Loan detail** | Summary view showing: borrower, amount, rate, term, monthly principal payment, first month's interest, first total payment, start date, expected end date, and remaining balance. |
+| **Paid off** | A loan whose remaining balance has reached zero. Displayed with a visual indicator on both the loan list and detail pages. No separate state record — derived from balance. |
+
+## Domain Rules
+
+- A **loan cannot be deleted** if it has recorded payments. The payment history is the financial record.
+- A **borrower cannot be deleted** if they have loans. Remove loans first (only possible if they have no payments).
+- A **payment date** must not be in the future. Backdating is allowed (to record payments received earlier).

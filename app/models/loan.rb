@@ -1,7 +1,7 @@
 class Loan < ApplicationRecord
   belongs_to :account
   belongs_to :borrower
-  has_many :payments
+  has_many :payments, dependent: :restrict_with_error
 
   validates :amount, presence: true, numericality: { greater_than: 0 }
   validates :annual_interest_rate, presence: true, numericality: { greater_than_or_equal_to: 0 }
@@ -46,11 +46,11 @@ class Loan < ApplicationRecord
     remaining_balance <= 0
   end
 
+  private
   def monthly_rate
     annual_interest_rate / 100 / 12
   end
 
-  private
   def set_start_date
     self.start_date ||= Date.current
   end

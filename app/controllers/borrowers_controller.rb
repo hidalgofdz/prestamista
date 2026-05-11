@@ -36,8 +36,11 @@ class BorrowersController < ApplicationController
   end
 
   def destroy
-    @borrower.destroy
-    redirect_to borrowers_path
+    if @borrower.destroy
+      redirect_to borrowers_path
+    else
+      redirect_to borrowers_path, alert: @borrower.errors.full_messages.join(", ")
+    end
   end
 
   private

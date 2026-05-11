@@ -1,5 +1,5 @@
 class Payment < ApplicationRecord
-  belongs_to :account
+  belongs_to :account, default: -> { loan.account }
   belongs_to :loan
 
   validates :amount, presence: true, numericality: { greater_than: 0 }
