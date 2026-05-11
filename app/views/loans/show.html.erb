@@ -29,6 +29,10 @@
   <dd><p><%= number_to_currency(@loan.remaining_balance, unit: "$", separator: ".", delimiter: ",") %></p></dd>
 </dl>
 
+<% if @loan.paid_off? %>
+  <p class="paid-off"><%= t(".paid_off") %></p>
+<% end %>
+
 <h2><%= t(".record_payment") %></h2>
 <%= form_with model: Payment.new, url: loan_payments_path(@loan) do |f| %>
   <div>

@@ -9,6 +9,8 @@ es-MX:
           attributes:
             amount:
               exceeds_balance: "excede el saldo restante"
+            date:
+              in_future: "no puede ser en el futuro"
     models:
       borrower:
         one: "Prestatario"
@@ -27,6 +29,7 @@ es-MX:
     index:
       title: "Préstamos"
       new: "Nuevo préstamo"
+      paid_off: "Liquidado"
     show:
       amount: "Monto"
       annual_interest_rate: "Tasa de interés anual"
@@ -37,6 +40,7 @@ es-MX:
       start_date: "Fecha de inicio"
       end_date: "Fecha de término"
       remaining_balance: "Saldo restante"
+      paid_off: "Liquidado"
       record_payment: "Registrar pago"
       submit_payment: "Registrar"
       payment_history: "Historial de pagos"

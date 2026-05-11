@@ -2,6 +2,7 @@ require "test_helper"
 
 class PaymentsTest < ActionDispatch::IntegrationTest
   setup do
+    travel_to Date.new(2026, 7, 15)
     sign_in users(:hidalgo)
     @loan = loans(:active_loan)
   end
@@ -57,7 +58,7 @@ class PaymentsTest < ActionDispatch::IntegrationTest
 
     assert_select "dd p", /7,166.67/
 
-    extra_payment = @loan.payments.order(created_at: :desc).first
+    extra_payment = @loan.payments.find_by(date: "2026-06-15")
     assert_equal BigDecimal("0"), extra_payment.interest_applied
     assert_equal BigDecimal("2000"), extra_payment.principal_applied
   end
@@ -77,7 +78,7 @@ class PaymentsTest < ActionDispatch::IntegrationTest
 
     assert_select "dd p", /6,333.34/
 
-    month2_payment = @loan.payments.order(created_at: :desc).first
+    month2_payment = @loan.payments.find_by(date: "2026-07-01")
     assert_in_delta 71.67, month2_payment.interest_applied.to_f, 0.01
     assert_in_delta 833.33, month2_payment.principal_applied.to_f, 0.01
   end
@@ -86,6 +87,16 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     assert_no_difference "Payment.count" do
       post loan_payments_path(@loan), params: {
         payment: { amount: "", date: "2026-06-01" }
+      }
+    end
+
+    assert_response :redirect
+  end
+
+  test "payment date cannot be in the future" do
+    assert_no_difference "Payment.count" do
+      post loan_payments_path(@loan), params: {
+        payment: { amount: "933.33", date: "2026-07-16" }
       }
     end
 
@@ -112,6 +123,34 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :not_found
+  end
+
+  test "fully paid loan shows paid off indicator on detail page" do
+    post loan_payments_path(@loan), params: {
+      payment: { amount: "933.33", date: "2026-06-01" }
+    }
+    post loan_payments_path(@loan), params: {
+      payment: { amount: "9166.67", date: "2026-06-15" }
+    }
+
+    get loan_path(@loan)
+
+    assert_response :success
+    assert_select ".paid-off"
+  end
+
+  test "fully paid loan shows paid off indicator on index page" do
+    post loan_payments_path(@loan), params: {
+      payment: { amount: "933.33", date: "2026-06-01" }
+    }
+    post loan_payments_path(@loan), params: {
+      payment: { amount: "9166.67", date: "2026-06-15" }
+    }
+
+    get loans_path
+
+    assert_response :success
+    assert_select ".paid-off"
   end
 
   test "payment history is in reverse chronological order" do

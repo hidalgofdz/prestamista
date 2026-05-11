@@ -9,6 +9,8 @@ en:
           attributes:
             amount:
               exceeds_balance: "exceeds the remaining balance"
+            date:
+              in_future: "cannot be in the future"
     models:
       borrower:
         one: "Borrower"
@@ -27,6 +29,7 @@ en:
     index:
       title: "Loans"
       new: "New loan"
+      paid_off: "Paid off"
     show:
       amount: "Amount"
       annual_interest_rate: "Annual interest rate"
@@ -37,6 +40,7 @@ en:
       start_date: "Start date"
       end_date: "End date"
       remaining_balance: "Remaining balance"
+      paid_off: "Paid off"
       record_payment: "Record payment"
       submit_payment: "Record"
       payment_history: "Payment history"

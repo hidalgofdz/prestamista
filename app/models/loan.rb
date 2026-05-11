@@ -42,6 +42,10 @@ class Loan < ApplicationRecord
     [ period_interest - already_paid, 0 ].max
   end
 
+  def paid_off?
+    remaining_balance <= 0
+  end
+
   def monthly_rate
     annual_interest_rate / 100 / 12
   end

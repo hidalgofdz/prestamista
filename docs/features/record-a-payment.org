@@ -3,6 +3,8 @@
 * Feature: Record a Payment
 ** Background:
 *** Given a lender with an active loan: borrower "aaron", amount $10,000, 12% annual rate, 12 months
+*** Interest accrues monthly from the loan start date. Payments apply to interest first, then principal. Once a period's interest is covered, further payments within that period apply entirely to principal.
+*** The lender provides the payment date (e.g., to record a payment received yesterday). Defaults to today if omitted. Future dates are not allowed.
 ** Scenario: Lender records a scheduled monthly payment
 *** When the lender records a payment of $933.33 for the loan
 *** Then the lender is redirected to the Loan detail page
@@ -34,8 +36,17 @@
 *** When the lender views the loan detail page
 *** Then the payment history lists all 3 payments in reverse chronological order
 *** And each payment shows: date, amount, principal portion, and interest portion
+** Scenario: Lender records a payment that fully pays off the loan
+*** Given the loan has a remaining balance of $933.33 and interest due is $100
+*** When the lender records a payment of $1,033.33
+*** Then the remaining balance shows $0.00
+*** And the loan detail page shows a "paid off" indicator
+*** And the loan list page shows a "paid off" indicator next to the loan
 ** Scenario: Payment requires a positive amount
 *** When the lender submits a payment with no amount
+*** Then the form shows a validation error
+** Scenario: Payment date cannot be in the future
+*** When the lender submits a payment with a date in the future
 *** Then the form shows a validation error
 ** Scenario: Payment cannot exceed remaining balance
 *** Given the loan has a remaining balance of $5,000
