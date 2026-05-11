@@ -1,0 +1,72 @@
+<h1><%= @loan.borrower.name %></h1>
+
+<dl>
+  <dt><%= t(".amount") %></dt>
+  <dd><p><%= number_to_currency(@loan.amount, unit: "$", separator: ".", delimiter: ",") %></p></dd>
+
+  <dt><%= t(".annual_interest_rate") %></dt>
+  <dd><p><%= number_to_percentage(@loan.annual_interest_rate, precision: 2) %></p></dd>
+
+  <dt><%= t(".term_months") %></dt>
+  <dd><p><%= @loan.term_months %></p></dd>
+
+  <dt><%= t(".monthly_principal") %></dt>
+  <dd><p><%= number_to_currency(@loan.monthly_principal, unit: "$", separator: ".", delimiter: ",") %></p></dd>
+
+  <dt><%= t(".first_month_interest") %></dt>
+  <dd><p><%= number_to_currency(@loan.first_month_interest, unit: "$", separator: ".", delimiter: ",") %></p></dd>
+
+  <dt><%= t(".first_month_payment") %></dt>
+  <dd><p><%= number_to_currency(@loan.first_month_payment, unit: "$", separator: ".", delimiter: ",") %></p></dd>
+
+  <dt><%= t(".start_date") %></dt>
+  <dd><p><%= l(@loan.start_date) %></p></dd>
+
+  <dt><%= t(".end_date") %></dt>
+  <dd><p><%= l(@loan.end_date) %></p></dd>
+
+  <dt><%= t(".remaining_balance") %></dt>
+  <dd><p><%= number_to_currency(@loan.remaining_balance, unit: "$", separator: ".", delimiter: ",") %></p></dd>
+</dl>
+
+<h2><%= t(".record_payment") %></h2>
+<%= form_with model: Payment.new, url: loan_payments_path(@loan) do |f| %>
+  <div>
+    <%= f.label :amount %>
+    <%= f.number_field :amount, step: "0.01" %>
+  </div>
+  <div>
+    <%= f.label :date %>
+    <%= f.date_field :date, value: Date.current %>
+  </div>
+  <div>
+    <%= f.submit t(".submit_payment") %>
+  </div>
+<% end %>
+
+<% if @loan.payments.any? %>
+  <h2><%= t(".payment_history") %></h2>
+  <table id="payments">
+    <thead>
+      <tr>
+        <th><%= t(".payment_date") %></th>
+        <th><%= t(".payment_amount") %></th>
+        <th><%= t(".payment_principal") %></th>
+        <th><%= t(".payment_interest") %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @loan.payments.order(date: :desc, created_at: :desc).each do |payment| %>
+        <tr>
+          <td><%= l(payment.date) %></td>
+          <td><%= number_to_currency(payment.amount, unit: "$", separator: ".", delimiter: ",") %></td>
+          <td><%= number_to_currency(payment.principal_applied, unit: "$", separator: ".", delimiter: ",") %></td>
+          <td><%= number_to_currency(payment.interest_applied, unit: "$", separator: ".", delimiter: ",") %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<%= link_to t(".edit"), edit_loan_path(@loan) %>
+<%= link_to t(".back"), loans_path %>

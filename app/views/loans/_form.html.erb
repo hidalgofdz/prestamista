@@ -1,0 +1,40 @@
+<%= form_with model: loan, url: loan.persisted? ? loan_path(loan) : loans_path do |f| %>
+  <% if loan.errors.any? %>
+    <div id="errors">
+      <ul>
+        <% loan.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :borrower_id %>
+    <%= f.collection_select :borrower_id, @account.borrowers, :id, :name, { prompt: t(".select_borrower") } %>
+  </div>
+
+  <div>
+    <%= f.label :amount %>
+    <%= f.number_field :amount, step: "0.01" %>
+  </div>
+
+  <div>
+    <%= f.label :annual_interest_rate %>
+    <%= f.number_field :annual_interest_rate, step: "0.01", min: "0" %>
+  </div>
+
+  <div>
+    <%= f.label :term_months %>
+    <%= f.number_field :term_months, step: "1", min: "1" %>
+  </div>
+
+  <div>
+    <%= f.label :start_date %>
+    <%= f.date_field :start_date %>
+  </div>
+
+  <div>
+    <%= f.submit %>
+  </div>
+<% end %>

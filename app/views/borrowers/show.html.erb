@@ -1,0 +1,6 @@
+<h1><%= @borrower.name %></h1>
+
+<p><%= @borrower.phone %></p>
+
+<%= link_to t(".edit"), edit_borrower_path(@borrower) %>
+<%= link_to t(".back"), borrowers_path %>

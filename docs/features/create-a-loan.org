@@ -1,0 +1,25 @@
+#+title: Create A Loan
+
+* Feature: Create a Loan
+** Background:
+*** Given a lender named "hidalgo" and a borrower named "aaron"
+** Scenario: Lender creates a loan
+*** When the lender creates a loan with the following details:
+**** Borrower: "aaron"
+**** Amount: $10,000
+**** Annual interest rate: 12%
+**** Term: 12 months
+*** Then the lender is redirected to the Loan detail page
+*** And the Loan detail page shows: borrower name, amount, rate, term, monthly payment, and start date
+*** When the lender navigates to the Loans page
+*** Then the loan appears in the list showing: borrower name, amount, and start date
+** Scenario: Lender creates another loan
+*** Given the lender already has existing loans
+*** When the lender creates a new loan
+*** Then the new loan appears on the Loans page alongside the existing loans
+** Scenario: Loan requires borrower and amount
+*** When the lender submits the loan form without selecting a borrower and without entering an amount
+*** Then the form shows validation errors for borrower and amount
+** Scenario: Interest-free loan is valid
+*** When the lender creates a loan with 0% interest rate
+*** Then the loan appears on the Loans page

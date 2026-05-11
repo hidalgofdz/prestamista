@@ -1,0 +1,47 @@
+#+title: Record A Payment
+
+* Feature: Record a Payment
+** Background:
+*** Given a lender with an active loan: borrower "aaron", amount $10,000, 12% annual rate, 12 months
+** Scenario: Lender records a scheduled monthly payment
+*** When the lender records a payment of $933.33 for the loan
+*** Then the lender is redirected to the Loan detail page
+*** And the remaining balance shows $9,166.67
+*** And the payment appears in the payment history showing: amount, date, principal applied, and interest applied
+** Scenario: Lender records an extra principal payment
+*** Given the loan has a remaining balance of $9,166.67 (one regular payment already made)
+*** When the lender records a payment of $2,000
+*** Then the remaining balance shows $7,166.67
+*** And the payment history shows $2,000 applied entirely to principal with $0 interest
+** Scenario: Lender records a partial payment (less than scheduled amount)
+*** Given the loan has a remaining balance of $10,000 and interest due is $100
+*** When the lender records a payment of $200
+*** Then the remaining balance shows $9,900
+*** And the payment shows: $100 interest applied, $100 principal applied
+** Scenario: Lender records a payment that only covers interest
+*** Given the loan has a remaining balance of $10,000 and interest due is $100
+*** When the lender records a payment of $50
+*** Then the remaining balance shows $10,000
+*** And the payment shows: $50 interest applied, $0 principal applied
+** Scenario: Scheduled payment after an extra principal payment reflects lower interest
+*** Given the loan has a remaining balance of $7,166.67 (one regular payment and one extra payment of $2,000)
+*** When the lender records a payment of $905.00
+*** Then the lender is redirected to the Loan detail page
+*** And the remaining balance shows $6,333.34
+*** And the payment shows: $71.67 interest applied, $833.33 principal applied
+** Scenario: Lender views payment history for a loan
+*** Given the loan has 3 recorded payments
+*** When the lender views the loan detail page
+*** Then the payment history lists all 3 payments in reverse chronological order
+*** And each payment shows: date, amount, principal portion, and interest portion
+** Scenario: Payment requires a positive amount
+*** When the lender submits a payment with no amount
+*** Then the form shows a validation error
+** Scenario: Payment cannot exceed remaining balance
+*** Given the loan has a remaining balance of $5,000
+*** When the lender tries to record a payment of $6,000
+*** Then the form shows a validation error that the amount exceeds the balance
+** Scenario: Cross-account isolation
+*** Given another lender has a different loan
+*** When the lender tries to record a payment on the other lender's loan
+*** Then the payment is not found

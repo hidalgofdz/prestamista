@@ -1,0 +1,10 @@
+<h1><%= t(".title") %></h1>
+
+<%= link_to t(".new"), new_borrower_path %>
+
+<% @borrowers.each do |borrower| %>
+  <div>
+    <%= link_to borrower.name, borrower_path(borrower) %>
+    <span><%= borrower.phone %></span>
+  </div>
+<% end %>

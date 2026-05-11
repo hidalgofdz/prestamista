@@ -1,0 +1,11 @@
+aaron:
+  id: "0000000000000000000000002"
+  name: Aaron
+  phone: "5551234567"
+  account_id: "0000000000000000000000001"
+
+other_borrower:
+  id: "0000000000000000000000003"
+  name: Someone Else
+  phone: "5550000000"
+  account_id: "0000000000000000000000099"

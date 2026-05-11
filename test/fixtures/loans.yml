@@ -1,0 +1,17 @@
+active_loan:
+  id: "0000000000000000000000010"
+  account_id: "0000000000000000000000001"
+  borrower_id: "0000000000000000000000002"
+  amount: 10000.00
+  annual_interest_rate: 12.00
+  term_months: 12
+  start_date: 2026-05-01
+
+other_account_loan:
+  id: "0000000000000000000000011"
+  account_id: "0000000000000000000000099"
+  borrower_id: "0000000000000000000000003"
+  amount: 5000.00
+  annual_interest_rate: 10.00
+  term_months: 6
+  start_date: 2026-05-01

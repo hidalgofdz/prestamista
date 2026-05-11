@@ -1,0 +1,23 @@
+<h1><%= t(".title") %></h1>
+
+<% if flash[:alert] %>
+  <p><%= flash[:alert] %></p>
+<% end %>
+
+<%= form_with url: registration_path, scope: :registration do |f| %>
+  <div>
+    <%= f.label :name %>
+    <%= f.text_field :name, autofocus: true %>
+  </div>
+
+  <div>
+    <%= f.label :email %>
+    <%= f.email_field :email %>
+  </div>
+
+  <div>
+    <%= f.submit t(".submit") %>
+  </div>
+<% end %>
+
+<p><%= link_to t(".sign_in"), new_session_path %></p>

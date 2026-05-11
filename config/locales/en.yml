@@ -2,3 +2,88 @@ en:
   application:
     name: "Prestamista"
     description: "Prestamista."
+  activerecord:
+    errors:
+      models:
+        payment:
+          attributes:
+            amount:
+              exceeds_balance: "exceeds the remaining balance"
+    models:
+      borrower:
+        one: "Borrower"
+        other: "Borrowers"
+      payment:
+        one: "Payment"
+        other: "Payments"
+    attributes:
+      borrower:
+        name: "Name"
+        phone: "Phone"
+      payment:
+        amount: "Amount"
+        date: "Date"
+  loans:
+    index:
+      title: "Loans"
+      new: "New loan"
+    show:
+      amount: "Amount"
+      annual_interest_rate: "Annual interest rate"
+      term_months: "Term (months)"
+      monthly_principal: "Monthly principal"
+      first_month_interest: "First month's interest"
+      first_month_payment: "First month's payment"
+      start_date: "Start date"
+      end_date: "End date"
+      remaining_balance: "Remaining balance"
+      record_payment: "Record payment"
+      submit_payment: "Record"
+      payment_history: "Payment history"
+      payment_date: "Date"
+      payment_amount: "Amount"
+      payment_principal: "Principal"
+      payment_interest: "Interest"
+      edit: "Edit"
+      back: "Back"
+    new:
+      title: "New loan"
+      back: "Back"
+    edit:
+      title: "Edit loan"
+      back: "Back"
+    form:
+      select_borrower: "Select a borrower"
+  auth_mailer:
+    magic_link:
+      subject: "Your sign-in link"
+      greeting: "Hello %{name},"
+      instructions: "Click the link below to sign in:"
+      expiry: "This link expires in 15 minutes."
+  sessions:
+    new:
+      title: "Sign in"
+      submit: "Send link"
+      sign_up: "Create account"
+    create:
+      notice: "If your email is registered, you'll receive a sign-in link."
+  registrations:
+    new:
+      title: "Create account"
+      submit: "Sign up"
+      sign_in: "Already have an account"
+    create:
+      alert: "Could not create account. Please check your details."
+  borrowers:
+    index:
+      title: "Borrowers"
+      new: "New borrower"
+    show:
+      edit: "Edit"
+      back: "Back"
+    new:
+      title: "New borrower"
+      back: "Back"
+    edit:
+      title: "Edit borrower"
+      back: "Back"
