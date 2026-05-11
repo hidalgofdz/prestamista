@@ -1,0 +1,44 @@
+#+title: Sign Up and Login
+
+* Feature: Sign Up and Login
+** Notes:
+*** Auth method: magic links only (passwordless, no passkeys for now)
+*** Magic link expiry: 15 minutes
+*** Magic link URL: ~/sessions/verify?token=abc123~
+*** Email service: Resend (letter_opener in development, ActionMailer test mode in tests)
+*** Sign up creates both a User and an Account (account name defaults to user name)
+*** Token implementation: Rails ~generates_token_for~ with 15-minute expiry
+*** Login request always shows same message regardless of whether email exists (prevents enumeration)
+*** Session: server-side model (revocable), referenced by encrypted cookie
+*** Account derived from session (not URL) — routes are ~/loans~, ~/borrowers~ (no ~/:account_id~ prefix)
+*** Root path: ~/loans~ (authenticated), login page (unauthenticated)
+*** Refactoring existing URL-based multi-tenancy is part of this feature
+** Background:
+*** Given the app has no existing users
+** Scenario: Lender signs up
+*** When a new lender signs up with email "hidalgo@example.com" and name "Hidalgo"
+*** Then the lender is redirected to the Loans page
+*** And an account is created for the lender
+** Scenario: Lender logs in via magic link
+*** Given a lender with email "hidalgo@example.com" already exists
+*** When the lender requests a magic link to "hidalgo@example.com"
+*** Then an email is sent with a login link
+*** When the lender clicks the login link within 15 minutes
+*** Then the lender is redirected to the Loans page
+** Scenario: Magic link expires after 15 minutes
+*** Given a lender with email "hidalgo@example.com" already exists
+*** When the lender clicks a magic link that is older than 15 minutes
+*** Then the lender sees an error that the link has expired
+*** And the lender is shown the login page to request a new link
+** Scenario: Sign up with existing email
+*** Given a lender with email "hidalgo@example.com" already exists
+*** When a new lender tries to sign up with email "hidalgo@example.com"
+*** Then the form shows a validation error that the email is already taken
+** Scenario: Lender logs out
+*** Given a lender is logged in
+*** When the lender clicks log out
+*** Then the lender is redirected to the login page
+*** And the lender can no longer access the Loans page
+** Scenario: Unauthenticated lender is redirected to login
+*** When an unauthenticated user tries to access the Loans page
+*** Then the user is redirected to the login page

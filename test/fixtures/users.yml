@@ -1,0 +1,11 @@
+hidalgo:
+  id: "0000000000000000000000100"
+  account_id: "0000000000000000000000001"
+  email: "hidalgo@example.com"
+  name: "Hidalgo"
+
+other_user:
+  id: "0000000000000000000000101"
+  account_id: "0000000000000000000000099"
+  email: "other@example.com"
+  name: "Other"

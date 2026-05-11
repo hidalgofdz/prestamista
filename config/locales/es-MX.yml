@@ -2,3 +2,92 @@ es-MX:
   application:
     name: "Prestamista"
     description: "Prestamista."
+  activerecord:
+    errors:
+      models:
+        payment:
+          attributes:
+            amount:
+              exceeds_balance: "excede el saldo restante"
+            date:
+              in_future: "no puede ser en el futuro"
+    models:
+      borrower:
+        one: "Prestatario"
+        other: "Prestatarios"
+      payment:
+        one: "Pago"
+        other: "Pagos"
+    attributes:
+      borrower:
+        name: "Nombre"
+        phone: "Teléfono"
+      payment:
+        amount: "Monto"
+        date: "Fecha"
+  loans:
+    index:
+      title: "Préstamos"
+      new: "Nuevo préstamo"
+      paid_off: "Liquidado"
+    show:
+      amount: "Monto"
+      annual_interest_rate: "Tasa de interés anual"
+      term_months: "Plazo (meses)"
+      monthly_principal: "Capital mensual"
+      first_month_interest: "Interés primer mes"
+      first_month_payment: "Pago primer mes"
+      start_date: "Fecha de inicio"
+      end_date: "Fecha de término"
+      remaining_balance: "Saldo restante"
+      paid_off: "Liquidado"
+      record_payment: "Registrar pago"
+      submit_payment: "Registrar"
+      payment_history: "Historial de pagos"
+      payment_date: "Fecha"
+      payment_amount: "Monto"
+      payment_principal: "Capital"
+      payment_interest: "Interés"
+      edit: "Editar"
+      back: "Regresar"
+    new:
+      title: "Nuevo préstamo"
+      back: "Regresar"
+    edit:
+      title: "Editar préstamo"
+      back: "Regresar"
+    form:
+      select_borrower: "Selecciona un prestatario"
+  auth_mailer:
+    magic_link:
+      subject: "Tu enlace para iniciar sesión"
+      greeting: "Hola %{name},"
+      instructions: "Haz clic en el siguiente enlace para iniciar sesión:"
+      expiry: "Este enlace expira en 15 minutos."
+  sessions:
+    new:
+      title: "Iniciar sesión"
+      submit: "Enviar enlace"
+      sign_up: "Crear cuenta"
+    create:
+      notice: "Si tu correo está registrado, recibirás un enlace para iniciar sesión."
+  registrations:
+    new:
+      title: "Crear cuenta"
+      submit: "Registrarme"
+      sign_in: "Ya tengo cuenta"
+    create:
+      alert: "No se pudo crear la cuenta. Verifica tus datos."
+  borrowers:
+    index:
+      title: "Prestatarios"
+      new: "Nuevo prestatario"
+    show:
+      edit: "Editar"
+      back: "Regresar"
+    new:
+      title: "Nuevo prestatario"
+      back: "Regresar"
+    edit:
+      title: "Editar prestatario"
+      back: "Regresar"

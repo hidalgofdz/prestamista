@@ -1,0 +1,25 @@
+<%= form_with model: borrower, url: borrower.persisted? ? borrower_path(borrower) : borrowers_path do |f| %>
+  <% if borrower.errors.any? %>
+    <div id="errors">
+      <ul>
+        <% borrower.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </div>
+
+  <div>
+    <%= f.label :phone %>
+    <%= f.telephone_field :phone %>
+  </div>
+
+  <div>
+    <%= f.submit %>
+  </div>
+<% end %>
