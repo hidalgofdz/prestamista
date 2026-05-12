@@ -138,7 +138,7 @@ class LoansTest < ActionDispatch::IntegrationTest
     assert_select "turbo-frame#inline_borrower_form", count: 0
   end
 
-  test "new loan form pre-opens inline borrower form when no borrowers exist" do
+  test "new loan form auto-loads inline borrower form when no borrowers exist" do
     sign_in_as users(:hidalgo)
     @borrower.loans.destroy_all
     @borrower.destroy!
@@ -146,9 +146,6 @@ class LoansTest < ActionDispatch::IntegrationTest
     get new_loan_path
 
     assert_response :success
-    assert_select "turbo-frame#inline_borrower_form" do
-      assert_select "input[name='borrower[name]']"
-      assert_select "input[name='borrower[phone]']"
-    end
+    assert_select "turbo-frame#inline_borrower_form[src=?]", new_loans_borrower_path
   end
 end

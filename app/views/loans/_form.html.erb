@@ -18,11 +18,9 @@
     <% if local_assigns.fetch(:allow_new_borrower, false) %>
       <%= link_to t(".new_borrower"), new_loans_borrower_path, data: { turbo_frame: "inline_borrower_form" } %>
 
-      <turbo-frame id="inline_borrower_form" data-controller="inline-form">
-        <% if @account.borrowers.none? %>
-          <%= render "loans/borrowers/form", borrower: Borrower.new %>
-        <% end %>
-      </turbo-frame>
+      <%= turbo_frame_tag "inline_borrower_form",
+        src: (@account.borrowers.none? ? new_loans_borrower_path : nil),
+        data: { controller: "inline-form" } %>
     <% end %>
   </div>
 

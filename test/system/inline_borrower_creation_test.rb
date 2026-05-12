@@ -48,6 +48,31 @@ class InlineBorrowerCreationTest < ApplicationSystemTestCase
     end
   end
 
+  test "lender with no borrowers creates one inline and then submits the loan" do
+    borrowers(:aaron).loans.destroy_all
+    borrowers(:aaron).destroy!
+
+    visit new_loan_path
+
+    within "turbo-frame#inline_borrower_form" do
+      fill_in "borrower[name]", with: "Maria"
+      fill_in "borrower[phone]", with: "5559876543"
+      click_on I18n.t("loans.borrowers.form.submit")
+    end
+
+    assert_no_selector ".inline-form"
+    assert_select_option "Maria", selected: true
+
+    fill_in "loan[amount]", with: "10000"
+    fill_in "loan[annual_interest_rate]", with: "12"
+    fill_in "loan[term_months]", with: "12"
+
+    click_on "Crear Loan"
+
+    assert_text "Maria"
+    assert_text "10,000"
+  end
+
   private
   def assert_select_option(text, selected: false)
     option = find("select#loan_borrower_id option", text: text)
