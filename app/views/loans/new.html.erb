@@ -1,5 +1,5 @@
 <h1><%= t(".title") %></h1>
 
-<%= render "form", loan: @loan %>
+<%= render "form", loan: @loan, allow_new_borrower: true %>
 
 <%= link_to t(".back"), loans_path %>

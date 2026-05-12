@@ -24,6 +24,12 @@
   </head>
 
   <body>
-    <%= yield %>
+    <% if authenticated? %>
+      <%= render "layouts/navbar" %>
+    <% end %>
+
+    <main class="container">
+      <%= yield %>
+    </main>
   </body>
 </html>

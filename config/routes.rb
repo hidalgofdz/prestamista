@@ -18,6 +18,10 @@ Rails.application.routes.draw do
     end
   end
 
+  scope module: :loans, path: "loans", as: :loans do
+    resources :borrowers, only: %i[new create]
+  end
+
   resource :registration, only: %i[new create]
   resource :session, only: %i[new create destroy] do
     get :verify, on: :collection

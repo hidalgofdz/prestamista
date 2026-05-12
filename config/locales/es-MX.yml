@@ -2,6 +2,10 @@ es-MX:
   application:
     name: "Prestamista"
     description: "Prestamista."
+  nav:
+    loans: "Préstamos"
+    borrowers: "Prestatarios"
+    log_out: "Cerrar sesión"
   activerecord:
     errors:
       models:
@@ -58,6 +62,11 @@ es-MX:
       back: "Regresar"
     form:
       select_borrower: "Selecciona un prestatario"
+      new_borrower: "Nuevo prestatario"
+    borrowers:
+      form:
+        submit: "Agregar prestatario"
+        cancel: "Cancelar"
   auth_mailer:
     magic_link:
       subject: "Tu enlace para iniciar sesión"

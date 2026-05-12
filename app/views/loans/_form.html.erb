@@ -11,7 +11,19 @@
 
   <div>
     <%= f.label :borrower_id %>
-    <%= f.collection_select :borrower_id, @account.borrowers, :id, :name, { prompt: t(".select_borrower") } %>
+    <div id="borrower_select_wrapper">
+      <%= f.collection_select :borrower_id, @account.borrowers.order(:name), :id, :name, { prompt: t(".select_borrower") } %>
+    </div>
+
+    <% if local_assigns.fetch(:allow_new_borrower, false) %>
+      <%= link_to t(".new_borrower"), new_loans_borrower_path, data: { turbo_frame: "inline_borrower_form" } %>
+
+      <turbo-frame id="inline_borrower_form" data-controller="inline-form">
+        <% if @account.borrowers.none? %>
+          <%= render "loans/borrowers/form", borrower: Borrower.new %>
+        <% end %>
+      </turbo-frame>
+    <% end %>
   </div>
 
   <div>

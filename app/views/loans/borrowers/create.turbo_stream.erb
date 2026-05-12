@@ -1,0 +1,12 @@
+<%= turbo_stream.replace "borrower_select_wrapper" do %>
+  <div id="borrower_select_wrapper">
+    <%= select_tag "loan[borrower_id]",
+      options_from_collection_for_select(@account.borrowers.order(:name), :id, :name, @borrower.id),
+      prompt: t("loans.form.select_borrower"),
+      id: "loan_borrower_id" %>
+  </div>
+<% end %>
+
+<%= turbo_stream.replace "inline_borrower_form" do %>
+  <turbo-frame id="inline_borrower_form" data-controller="inline-form"></turbo-frame>
+<% end %>

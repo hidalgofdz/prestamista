@@ -1,0 +1,30 @@
+<div class="inline-form">
+  <%= form_with model: borrower, url: loans_borrowers_path do |f| %>
+    <% if borrower.errors.any? %>
+      <div id="errors">
+        <ul>
+          <% borrower.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="inline-form-fields">
+      <div>
+        <%= f.label :name %>
+        <%= f.text_field :name, autofocus: true %>
+      </div>
+
+      <div>
+        <%= f.label :phone %>
+        <%= f.telephone_field :phone %>
+      </div>
+    </div>
+
+    <div class="inline-form-actions">
+      <%= f.submit t(".submit") %>
+      <%= link_to t(".cancel"), "#", data: { action: "click->inline-form#close" } %>
+    </div>
+  <% end %>
+</div>

@@ -119,4 +119,36 @@ class LoansTest < ActionDispatch::IntegrationTest
     assert_select "a", text: /Aaron/
     assert_select "a", text: /Someone Else/, count: 0
   end
+
+  test "new loan form shows new borrower link" do
+    get new_loan_path
+
+    assert_response :success
+    assert_select "a[href='#{new_loans_borrower_path}']", /prestatario/i
+    assert_select "turbo-frame#inline_borrower_form"
+  end
+
+  test "edit loan form does not show new borrower link" do
+    loan = loans(:active_loan)
+
+    get edit_loan_path(loan)
+
+    assert_response :success
+    assert_select "a[href='#{new_loans_borrower_path}']", count: 0
+    assert_select "turbo-frame#inline_borrower_form", count: 0
+  end
+
+  test "new loan form pre-opens inline borrower form when no borrowers exist" do
+    sign_in_as users(:hidalgo)
+    @borrower.loans.destroy_all
+    @borrower.destroy!
+
+    get new_loan_path
+
+    assert_response :success
+    assert_select "turbo-frame#inline_borrower_form" do
+      assert_select "input[name='borrower[name]']"
+      assert_select "input[name='borrower[phone]']"
+    end
+  end
 end

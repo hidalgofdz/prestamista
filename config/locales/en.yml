@@ -2,6 +2,10 @@ en:
   application:
     name: "Prestamista"
     description: "Prestamista."
+  nav:
+    loans: "Loans"
+    borrowers: "Borrowers"
+    log_out: "Log out"
   activerecord:
     errors:
       models:
@@ -58,6 +62,11 @@ en:
       back: "Back"
     form:
       select_borrower: "Select a borrower"
+      new_borrower: "New borrower"
+    borrowers:
+      form:
+        submit: "Add borrower"
+        cancel: "Cancel"
   auth_mailer:
     magic_link:
       subject: "Your sign-in link"

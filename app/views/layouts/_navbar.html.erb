@@ -1,0 +1,12 @@
+<nav class="navbar">
+  <div class="navbar-start">
+    <%= link_to t("application.name"), root_path, class: "navbar-brand" %>
+    <%= link_to t("nav.loans"), loans_path, class: "navbar-link #{"active" if controller_name == "loans"}" %>
+    <%= link_to t("nav.borrowers"), borrowers_path, class: "navbar-link #{"active" if controller_name == "borrowers"}" %>
+  </div>
+
+  <div class="navbar-end">
+    <span class="navbar-user"><%= Current.user.name %></span>
+    <%= button_to t("nav.log_out"), session_path, method: :delete, class: "navbar-link" %>
+  </div>
+</nav>
