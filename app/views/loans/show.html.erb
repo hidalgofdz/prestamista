@@ -10,14 +10,8 @@
   <dt><%= t(".term_months") %></dt>
   <dd><p><%= @loan.term_months %></p></dd>
 
-  <dt><%= t(".monthly_principal") %></dt>
-  <dd><p><%= number_to_currency(@loan.monthly_principal, unit: "$", separator: ".", delimiter: ",") %></p></dd>
-
-  <dt><%= t(".first_month_interest") %></dt>
-  <dd><p><%= number_to_currency(@loan.first_month_interest, unit: "$", separator: ".", delimiter: ",") %></p></dd>
-
-  <dt><%= t(".first_month_payment") %></dt>
-  <dd><p><%= number_to_currency(@loan.first_month_payment, unit: "$", separator: ".", delimiter: ",") %></p></dd>
+  <dt><%= t(".monthly_payment") %></dt>
+  <dd><p><%= number_to_currency(@loan.monthly_payment, unit: "$", separator: ".", delimiter: ",") %></p></dd>
 
   <dt><%= t(".start_date") %></dt>
   <dd><p><%= l(@loan.start_date) %></p></dd>

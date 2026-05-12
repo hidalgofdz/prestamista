@@ -10,16 +10,11 @@ class Loan < ApplicationRecord
 
   before_validation :set_start_date
 
-  def monthly_principal
-    amount / term_months
-  end
+  def monthly_payment
+    rate = monthly_rate
+    return amount / term_months if rate.zero?
 
-  def first_month_interest
-    amount * monthly_rate
-  end
-
-  def first_month_payment
-    monthly_principal + first_month_interest
+    amount * (rate * (1 + rate)**term_months) / ((1 + rate)**term_months - 1)
   end
 
   def end_date

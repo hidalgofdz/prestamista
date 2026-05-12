@@ -21,8 +21,7 @@ class LoansTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h1", /Aaron/
-    assert_select "dd p", /833/
-    assert_select "dd p", /100/
+    assert_select "dd p", /888/
   end
 
   test "lender edits a loan" do
