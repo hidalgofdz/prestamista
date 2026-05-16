@@ -1,6 +1,6 @@
 class Loan < ApplicationRecord
-  belongs_to :account
-  belongs_to :borrower
+  belongs_to :account, default: -> { borrower.account }
+  belongs_to :borrower, touch: true
   has_many :payments, dependent: :restrict_with_error
 
   validates :amount, presence: true, numericality: { greater_than: 0 }
@@ -44,7 +44,7 @@ class Loan < ApplicationRecord
       period_start = month == 1 ? start_date : (start_date >> (month - 1)) + 1.day
       period_payments = cached_payments.select { |p| p.date >= period_start && p.date <= due_date }
 
-      unless period_covered?(period_payments)
+      if !period_covered?(period_payments)
         return due_date
       end
     end
@@ -63,12 +63,14 @@ class Loan < ApplicationRecord
 
   private
   def period_covered?(period_payments)
-    return false if period_payments.empty?
-
-    total = period_payments.sum(&:amount)
-    return total >= monthly_payment if monthly_rate.zero?
-
-    total >= monthly_payment && period_payments.any? { |p| p.interest_applied > 0 }
+    if period_payments.empty?
+      false
+    elsif monthly_rate.zero?
+      period_payments.sum(&:amount) >= monthly_payment
+    else
+      period_payments.sum(&:amount) >= monthly_payment &&
+        period_payments.any? { |p| p.interest_applied > 0 }
+    end
   end
 
   def cached_payments(excluding: nil)

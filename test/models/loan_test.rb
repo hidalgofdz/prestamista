@@ -92,6 +92,29 @@ class LoanTest < ActiveSupport::TestCase
     end
   end
 
+  test "account defaults to borrower's account" do
+    loan = Loan.new(
+      borrower: borrowers(:aaron),
+      amount: 5000,
+      annual_interest_rate: 10,
+      term_months: 6,
+      start_date: Date.current
+    )
+    loan.valid?
+
+    assert_equal borrowers(:aaron).account, loan.account
+  end
+
+  test "updating a loan touches borrower's updated_at" do
+    loan = loans(:active_loan)
+    borrower = loan.borrower
+
+    travel_to 1.day.from_now do
+      loan.update!(amount: loan.amount + 1000)
+      assert_equal Time.current, borrower.reload.updated_at
+    end
+  end
+
   test "paid-off loan is never overdue even if periods are uncovered" do
     loan = Loan.create!(
       account: accounts(:one),
