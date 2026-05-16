@@ -26,4 +26,58 @@ class LoanTest < ActiveSupport::TestCase
 
     assert_in_delta 2083.33, loan.monthly_payment, 0.01
   end
+
+  test "next_payment_date is one month after start when no payments" do
+    loan = loans(:active_loan)
+
+    assert_equal Date.new(2026, 6, 1), loan.next_payment_date
+  end
+
+  test "next_payment_date advances after period is fully covered" do
+    loan = loans(:active_loan)
+
+    travel_to Date.new(2026, 6, 1) do
+      loan.payments.create!(amount: 933.33, date: Date.new(2026, 6, 1), account: loan.account)
+      assert_equal Date.new(2026, 7, 1), loan.next_payment_date
+    end
+  end
+
+  test "overdue when next due date is in the past and period not covered" do
+    loan = loans(:active_loan)
+
+    travel_to Date.new(2026, 6, 2) do
+      assert loan.overdue?
+    end
+  end
+
+  test "partial payment does not clear overdue" do
+    loan = loans(:active_loan)
+
+    travel_to Date.new(2026, 6, 1) do
+      loan.payments.create!(amount: 200, date: Date.new(2026, 6, 1), account: loan.account)
+    end
+
+    travel_to Date.new(2026, 6, 2) do
+      assert loan.overdue?
+    end
+  end
+
+  test "not overdue on the due date itself" do
+    loan = loans(:active_loan)
+
+    travel_to Date.new(2026, 6, 1) do
+      assert_not loan.overdue?
+    end
+  end
+
+  test "extra principal payment does not advance next payment date beyond covered periods" do
+    loan = loans(:active_loan)
+
+    travel_to Date.new(2026, 6, 1) do
+      loan.payments.create!(amount: 933.33, date: Date.new(2026, 6, 1), account: loan.account)
+      loan.payments.create!(amount: 2000, date: Date.new(2026, 6, 1), account: loan.account)
+
+      assert_equal Date.new(2026, 7, 1), loan.next_payment_date
+    end
+  end
 end

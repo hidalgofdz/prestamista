@@ -7,6 +7,15 @@ active_loan:
   term_months: 12
   start_date: 2026-05-01
 
+paid_off_loan:
+  id: "0000000000000000000000012"
+  account_id: "0000000000000000000000001"
+  borrower_id: "0000000000000000000000002"
+  amount: 1000.00
+  annual_interest_rate: 0.00
+  term_months: 1
+  start_date: 2026-01-15
+
 other_account_loan:
   id: "0000000000000000000000011"
   account_id: "0000000000000000000000099"

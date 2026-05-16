@@ -1,1 +1,8 @@
-# empty for now — tests create payments via POST
+paid_off_payment:
+  id: "0000000000000000000000020"
+  account_id: "0000000000000000000000001"
+  loan_id: "0000000000000000000000012"
+  amount: 1000.00
+  principal_applied: 1000.00
+  interest_applied: 0.00
+  date: 2026-02-01

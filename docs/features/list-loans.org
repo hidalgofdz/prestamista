@@ -1,0 +1,58 @@
+#+title: List Loans
+
+* Feature: List Loans
+** Background:
+*** Given a lender with an active loan: borrower "Aaron", amount $10,000, 12% annual rate, 12 months, started 2026-05-01
+*** Payment due dates are derived monthly from the loan start date (first due date is one month after start).
+*** A period is considered covered when payments within that period sum to at least the scheduled monthly payment amount.
+*** A loan is overdue when its next due date is strictly in the past and the period is not fully covered.
+** Scenario: Lender views the loan list with active loans
+*** When the lender views the loans page
+*** Then the page shows the "Active Loans" section
+*** And each loan shows: borrower name, amount borrowed, start date, and next payment due date
+*** And loans are sorted newest first (by start date, most recent at top)
+** Scenario: Loan shows next payment due date
+*** Given the loan started on 2026-05-01 and no payments have been recorded
+*** When the lender views the loans page on 2026-05-15
+*** Then the loan shows next payment date as 2026-06-01
+** Scenario: Next payment date advances after a period is fully covered
+*** Given the loan started on 2026-05-01 and the lender recorded a payment of $933.33 on 2026-06-01
+*** When the lender views the loans page
+*** Then the loan shows next payment date as 2026-07-01
+** Scenario: Overdue loan is flagged
+*** Given the loan started on 2026-05-01 and no payments have been recorded
+*** When the lender views the loans page on 2026-06-02
+*** Then the loan shows "Overdue (2026-06-01)" instead of the next payment date
+** Scenario: Partial payment does not clear the overdue flag
+*** Given the loan has a scheduled payment of $933.33 due on 2026-06-01
+*** And the lender recorded a payment of $200 on 2026-06-01
+*** When the lender views the loans page on 2026-06-02
+*** Then the loan still shows "Overdue (2026-06-01)"
+** Scenario: Loan on its due date is not yet overdue
+*** Given the loan has a payment due on 2026-06-01 and no payments recorded
+*** When the lender views the loans page on 2026-06-01
+*** Then the loan shows next payment date as 2026-06-01 (not flagged as overdue)
+** Scenario: Next payment reflects lower interest after an extra principal payment
+*** Given the loan has had one regular payment and one extra payment of $2,000
+*** When the lender views the loans page
+*** Then the next payment due date advances based on covered periods, not on the extra payment amount
+** Scenario: Paid-off loans appear in a separate section
+*** Given the lender has one active loan and one fully paid-off loan
+*** When the lender views the loans page
+*** Then the page shows two sections: "Active Loans" and "Paid Off"
+*** And the paid-off loan appears only in the "Paid Off" section
+*** And the paid-off loan shows: borrower name, amount borrowed, and start date
+*** And the paid-off loan does not show a next payment date
+** Scenario: Distinguishing loans from the same borrower
+*** Given the lender has two loans for borrower "Aaron": one for $10,000 started 2026-01-15 and one for $10,000 started 2026-05-01
+*** When the lender views the loans page
+*** Then both loans are listed with their respective start dates, allowing the lender to tell them apart
+** Scenario: Empty state when lender has no loans
+*** Given the lender has no loans
+*** When the lender views the loans page
+*** Then the page shows a message indicating there are no loans yet
+*** And the page shows a link to create a new loan
+** Scenario: Cross-account isolation
+*** Given another lender has a different loan
+*** When the lender views the loans page
+*** Then only the lender's own loans are listed

@@ -139,6 +139,7 @@ class LoansTest < ActionDispatch::IntegrationTest
 
   test "new loan form auto-loads inline borrower form when no borrowers exist" do
     sign_in_as users(:hidalgo)
+    Payment.where(loan: @borrower.loans).delete_all
     @borrower.loans.destroy_all
     @borrower.destroy!
 
@@ -146,5 +147,60 @@ class LoansTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "turbo-frame#inline_borrower_form[src=?]", new_loans_borrower_path
+  end
+
+  test "index shows active loans section with next payment date" do
+    get loans_path
+
+    assert_response :success
+    assert_select "h2", /Activos/
+    assert_select "[data-testid='next-payment']", /2026-06-01/
+  end
+
+  test "paid-off loans appear in separate section without next payment date" do
+    get loans_path
+
+    assert_response :success
+    assert_select "h2", /Liquidados/
+    assert_select "h2", /Activos/
+  end
+
+  test "active loans sorted newest first by start date" do
+    Loan.create!(
+      account: accounts(:one),
+      borrower: @borrower,
+      amount: 5000,
+      annual_interest_rate: 10,
+      term_months: 6,
+      start_date: Date.new(2026, 5, 10)
+    )
+
+    get loans_path
+
+    assert_response :success
+    dates = css_select("[data-testid='next-payment']").map(&:text)
+    assert_equal 2, dates.length
+    assert_match(/2026-06-10/, dates.first)
+    assert_match(/2026-06-01/, dates.last)
+  end
+
+  test "empty state when lender has no loans" do
+    Payment.where(loan: accounts(:one).loans).delete_all
+    accounts(:one).loans.destroy_all
+
+    get loans_path
+
+    assert_response :success
+    assert_select "p", /no tienes préstamos/i
+    assert_select "a[href='#{new_loan_path}']"
+  end
+
+  test "overdue loan shows overdue badge with due date" do
+    travel_to Date.new(2026, 6, 2) do
+      get loans_path
+
+      assert_response :success
+      assert_select "[data-testid='next-payment'].overdue", /Vencido.*2026-06-01/
+    end
   end
 end

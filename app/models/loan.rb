@@ -37,6 +37,25 @@ class Loan < ApplicationRecord
     [ period_interest - already_paid, 0 ].max
   end
 
+  def next_payment_date
+    (1..term_months).each do |month|
+      due_date = start_date >> month
+      period_start = month == 1 ? start_date : (start_date >> (month - 1)) + 1.day
+      period_payments = payments.where(date: period_start..due_date).sum(:amount)
+
+      if period_payments < monthly_payment
+        return due_date
+      end
+    end
+
+    nil
+  end
+
+  def overdue?
+    due = next_payment_date
+    due.present? && due < Date.current
+  end
+
   def paid_off?
     remaining_balance <= 0
   end
