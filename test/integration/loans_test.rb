@@ -154,7 +154,7 @@ class LoansTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h2", /Activos/
-    assert_select "[data-testid='next-payment']", /2026-06-01/
+    assert_select "[data-testid='next-payment']", /01\/06\/2026/
   end
 
   test "paid-off loans appear in separate section without next payment date" do
@@ -180,8 +180,8 @@ class LoansTest < ActionDispatch::IntegrationTest
     assert_response :success
     dates = css_select("[data-testid='next-payment']").map(&:text)
     assert_equal 2, dates.length
-    assert_match(/2026-06-10/, dates.first)
-    assert_match(/2026-06-01/, dates.last)
+    assert_match(/10\/06\/2026/, dates.first)
+    assert_match(/01\/06\/2026/, dates.last)
   end
 
   test "empty state when lender has no loans" do
@@ -200,7 +200,7 @@ class LoansTest < ActionDispatch::IntegrationTest
       get loans_path
 
       assert_response :success
-      assert_select "[data-testid='next-payment'].overdue", /Vencido.*2026-06-01/
+      assert_select "[data-testid='next-payment'].overdue", /Vencido.*01\/06\/2026/
     end
   end
 end

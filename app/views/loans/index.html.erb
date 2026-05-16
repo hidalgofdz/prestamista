@@ -10,9 +10,9 @@
       <span><%= number_to_currency(loan.amount, unit: "$", separator: ".", delimiter: ",") %></span>
       <span><%= l(loan.start_date) %></span>
       <% if loan.overdue? %>
-        <span data-testid="next-payment" class="overdue"><%= t(".overdue", date: loan.next_payment_date) %></span>
+        <span data-testid="next-payment" class="overdue"><%= t(".overdue", date: l(loan.next_payment_date)) %></span>
       <% else %>
-        <span data-testid="next-payment"><%= loan.next_payment_date %></span>
+        <span data-testid="next-payment"><%= l(loan.next_payment_date) %></span>
       <% end %>
     </div>
   <% end %>
