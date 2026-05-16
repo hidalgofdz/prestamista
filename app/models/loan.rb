@@ -42,11 +42,9 @@ class Loan < ApplicationRecord
     (1..term_months).each do |month|
       due_date = start_date >> month
       period_start = month == 1 ? start_date : (start_date >> (month - 1)) + 1.day
-      period_total = cached_payments
-        .select { |p| p.date >= period_start && p.date <= due_date }
-        .sum(&:amount)
+      period_payments = cached_payments.select { |p| p.date >= period_start && p.date <= due_date }
 
-      if period_total < monthly_payment
+      unless period_covered?(period_payments)
         return due_date
       end
     end
@@ -64,6 +62,15 @@ class Loan < ApplicationRecord
   end
 
   private
+  def period_covered?(period_payments)
+    return false if period_payments.empty?
+
+    total = period_payments.sum(&:amount)
+    return total >= monthly_payment if monthly_rate.zero?
+
+    total >= monthly_payment && period_payments.any? { |p| p.interest_applied > 0 }
+  end
+
   def cached_payments(excluding: nil)
     all = payments.load
     if excluding

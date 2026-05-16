@@ -70,12 +70,23 @@ class LoanTest < ActiveSupport::TestCase
     end
   end
 
-  test "extra principal payment does not advance next payment date beyond covered periods" do
+  test "extra principal payment on same date does not advance next payment date" do
     loan = loans(:active_loan)
 
     travel_to Date.new(2026, 6, 1) do
       loan.payments.create!(amount: 933.33, date: Date.new(2026, 6, 1), account: loan.account)
       loan.payments.create!(amount: 2000, date: Date.new(2026, 6, 1), account: loan.account)
+
+      assert_equal Date.new(2026, 7, 1), loan.next_payment_date
+    end
+  end
+
+  test "extra principal payment in next period window does not cover that period" do
+    loan = loans(:active_loan)
+
+    travel_to Date.new(2026, 6, 15) do
+      loan.payments.create!(amount: 933.33, date: Date.new(2026, 6, 1), account: loan.account)
+      loan.payments.create!(amount: 2000, date: Date.new(2026, 6, 15), account: loan.account)
 
       assert_equal Date.new(2026, 7, 1), loan.next_payment_date
     end
