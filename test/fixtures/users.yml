@@ -4,6 +4,12 @@ hidalgo:
   email: "hidalgo@example.com"
   name: "Hidalgo"
 
+empty_lender:
+  id: "0000000000000000000000102"
+  account_id: "0000000000000000000000098"
+  email: "empty@example.com"
+  name: "Empty"
+
 other_user:
   id: "0000000000000000000000101"
   account_id: "0000000000000000000000099"

@@ -2,6 +2,10 @@ one:
   id: "0000000000000000000000001"
   name: Hidalgo
 
+empty:
+  id: "0000000000000000000000098"
+  name: Empty Lender
+
 two:
   id: "0000000000000000000000099"
   name: Other Lender

@@ -138,10 +138,7 @@ class LoansTest < ActionDispatch::IntegrationTest
   end
 
   test "new loan form auto-loads inline borrower form when no borrowers exist" do
-    sign_in_as users(:hidalgo)
-    Payment.where(loan: @borrower.loans).delete_all
-    @borrower.loans.destroy_all
-    @borrower.destroy!
+    sign_in_as users(:empty_lender)
 
     get new_loan_path
 
@@ -185,8 +182,7 @@ class LoansTest < ActionDispatch::IntegrationTest
   end
 
   test "empty state when lender has no loans" do
-    Payment.where(loan: accounts(:one).loans).delete_all
-    accounts(:one).loans.destroy_all
+    sign_in_as users(:empty_lender)
 
     get loans_path
 

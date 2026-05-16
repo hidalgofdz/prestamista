@@ -38,9 +38,7 @@ class BorrowersTest < ActionDispatch::IntegrationTest
   end
 
   test "lender deletes a borrower without loans" do
-    borrower = borrowers(:aaron)
-    Payment.where(loan: borrower.loans).delete_all
-    borrower.loans.destroy_all
+    borrower = borrowers(:no_loans)
 
     assert_difference "Borrower.count", -1 do
       delete borrower_path(borrower)
