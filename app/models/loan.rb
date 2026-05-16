@@ -1,6 +1,6 @@
 class Loan < ApplicationRecord
-  belongs_to :account
-  belongs_to :borrower
+  belongs_to :account, default: -> { borrower.account }
+  belongs_to :borrower, touch: true
   has_many :payments, dependent: :restrict_with_error
 
   validates :amount, presence: true, numericality: { greater_than: 0 }
@@ -22,7 +22,7 @@ class Loan < ApplicationRecord
   end
 
   def remaining_balance(excluding: nil)
-    paid_principal = payments.where.not(id: excluding&.id).sum(:principal_applied)
+    paid_principal = cached_payments(excluding: excluding).sum(&:principal_applied)
     amount - paid_principal
   end
 
@@ -30,11 +30,31 @@ class Loan < ApplicationRecord
     period_start = period_start_for(date)
     balance = remaining_balance(excluding: excluding)
     period_interest = balance * monthly_rate
-    already_paid = payments
-      .where.not(id: excluding&.id)
-      .where(date: period_start..period_end_for(period_start))
-      .sum(:interest_applied)
+    already_paid = cached_payments(excluding: excluding)
+      .select { |p| p.date >= period_start && p.date <= period_end_for(period_start) }
+      .sum(&:interest_applied)
     [ period_interest - already_paid, 0 ].max
+  end
+
+  def next_payment_date
+    return nil if paid_off?
+
+    (1..term_months).each do |month|
+      due_date = start_date >> month
+      period_start = month == 1 ? start_date : (start_date >> (month - 1)) + 1.day
+      period_payments = cached_payments.select { |p| p.date >= period_start && p.date <= due_date }
+
+      if !period_covered?(period_payments)
+        return due_date
+      end
+    end
+
+    nil
+  end
+
+  def overdue?
+    due = next_payment_date
+    due.present? && due < Date.current
   end
 
   def paid_off?
@@ -42,6 +62,26 @@ class Loan < ApplicationRecord
   end
 
   private
+  def period_covered?(period_payments)
+    if period_payments.empty?
+      false
+    elsif monthly_rate.zero?
+      period_payments.sum(&:amount) >= monthly_payment
+    else
+      period_payments.sum(&:amount) >= monthly_payment &&
+        period_payments.any? { |p| p.interest_applied > 0 }
+    end
+  end
+
+  def cached_payments(excluding: nil)
+    all = payments.load
+    if excluding
+      all.reject { |p| p.id == excluding.id }
+    else
+      all
+    end
+  end
+
   def monthly_rate
     annual_interest_rate / 100 / 12
   end

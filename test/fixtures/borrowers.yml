@@ -4,6 +4,12 @@ aaron:
   phone: "5551234567"
   account_id: "0000000000000000000000001"
 
+no_loans:
+  id: "0000000000000000000000004"
+  name: Carlos
+  phone: "5559999999"
+  account_id: "0000000000000000000000001"
+
 other_borrower:
   id: "0000000000000000000000003"
   name: Someone Else

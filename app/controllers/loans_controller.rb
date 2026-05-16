@@ -4,7 +4,9 @@ class LoansController < ApplicationController
   before_action :set_loan, only: %i[show edit update destroy]
 
   def index
-    @loans = @account.loans.includes(:borrower)
+    loans = @account.loans.includes(:borrower, :payments).order(start_date: :desc)
+    @active_loans = loans.reject(&:paid_off?)
+    @paid_off_loans = loans.select(&:paid_off?)
   end
 
   def show

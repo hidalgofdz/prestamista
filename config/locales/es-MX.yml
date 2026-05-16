@@ -33,7 +33,11 @@ es-MX:
     index:
       title: "Préstamos"
       new: "Nuevo préstamo"
+      active_title: "Préstamos Activos"
+      paid_off_title: "Liquidados"
       paid_off: "Liquidado"
+      overdue: "Vencido (%{date})"
+      empty: "No tienes préstamos registrados."
     show:
       amount: "Monto"
       annual_interest_rate: "Tasa de interés anual"

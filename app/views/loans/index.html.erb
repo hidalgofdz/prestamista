@@ -2,13 +2,34 @@
 
 <%= link_to t(".new"), new_loan_path %>
 
-<% @loans.each do |loan| %>
-  <div>
-    <%= link_to loan.borrower.name, loan_path(loan) %>
-    <span><%= number_to_currency(loan.amount, unit: "$", separator: ".", delimiter: ",") %></span>
-    <span><%= l(loan.start_date) %></span>
-    <% if loan.paid_off? %>
-      <span class="paid-off"><%= t(".paid_off") %></span>
-    <% end %>
-  </div>
+<% if @active_loans.any? %>
+  <h2><%= t(".active_title") %></h2>
+  <% @active_loans.each do |loan| %>
+    <div>
+      <%= link_to loan.borrower.name, loan_path(loan) %>
+      <span><%= number_to_currency(loan.amount, unit: "$", separator: ".", delimiter: ",") %></span>
+      <span><%= l(loan.start_date) %></span>
+      <% if loan.overdue? %>
+        <span data-testid="next-payment" class="overdue"><%= t(".overdue", date: l(loan.next_payment_date)) %></span>
+      <% else %>
+        <span data-testid="next-payment"><%= l(loan.next_payment_date) %></span>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
+
+<% if @paid_off_loans.any? %>
+  <h2><%= t(".paid_off_title") %></h2>
+  <% @paid_off_loans.each do |loan| %>
+    <div>
+      <%= link_to loan.borrower.name, loan_path(loan) %>
+      <span><%= number_to_currency(loan.amount, unit: "$", separator: ".", delimiter: ",") %></span>
+      <span><%= l(loan.start_date) %></span>
+    </div>
+  <% end %>
+<% end %>
+
+<% if @active_loans.empty? && @paid_off_loans.empty? %>
+  <p><%= t(".empty") %></p>
+  <%= link_to t(".new"), new_loan_path %>
 <% end %>

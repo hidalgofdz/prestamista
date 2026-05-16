@@ -37,8 +37,7 @@ class InlineBorrowerCreationTest < ApplicationSystemTestCase
   end
 
   test "inline form is pre-opened when lender has no borrowers" do
-    borrowers(:aaron).loans.destroy_all
-    borrowers(:aaron).destroy!
+    sign_in_as users(:empty_lender)
 
     visit new_loan_path
 
@@ -49,8 +48,7 @@ class InlineBorrowerCreationTest < ApplicationSystemTestCase
   end
 
   test "lender with no borrowers creates one inline and then submits the loan" do
-    borrowers(:aaron).loans.destroy_all
-    borrowers(:aaron).destroy!
+    sign_in_as users(:empty_lender)
 
     visit new_loan_path
 

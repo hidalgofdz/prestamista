@@ -33,7 +33,11 @@ en:
     index:
       title: "Loans"
       new: "New loan"
+      active_title: "Active Loans"
+      paid_off_title: "Paid Off"
       paid_off: "Paid off"
+      overdue: "Overdue (%{date})"
+      empty: "You don't have any loans yet."
     show:
       amount: "Amount"
       annual_interest_rate: "Annual interest rate"

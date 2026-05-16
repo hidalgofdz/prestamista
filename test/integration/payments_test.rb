@@ -139,7 +139,7 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     assert_select ".paid-off"
   end
 
-  test "fully paid loan shows paid off indicator on index page" do
+  test "fully paid loan shows in paid off section on index page" do
     post loan_payments_path(@loan), params: {
       payment: { amount: "933.33", date: "2026-06-01" }
     }
@@ -150,7 +150,8 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     get loans_path
 
     assert_response :success
-    assert_select ".paid-off"
+    assert_select "h2", text: /Activos/, count: 0
+    assert_select "[data-testid='next-payment']", count: 0
   end
 
   test "payment history is in reverse chronological order" do
