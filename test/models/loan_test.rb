@@ -80,4 +80,24 @@ class LoanTest < ActiveSupport::TestCase
       assert_equal Date.new(2026, 7, 1), loan.next_payment_date
     end
   end
+
+  test "paid-off loan is never overdue even if periods are uncovered" do
+    loan = Loan.create!(
+      account: accounts(:one),
+      borrower: borrowers(:aaron),
+      amount: 1000,
+      annual_interest_rate: 0,
+      term_months: 3,
+      start_date: Date.new(2026, 1, 1)
+    )
+
+    travel_to Date.new(2026, 1, 15) do
+      loan.payments.create!(amount: 1000, date: Date.new(2026, 1, 15), account: loan.account)
+    end
+
+    travel_to Date.new(2026, 4, 2) do
+      assert loan.paid_off?
+      assert_not loan.overdue?
+    end
+  end
 end

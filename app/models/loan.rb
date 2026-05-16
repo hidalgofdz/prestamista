@@ -38,6 +38,8 @@ class Loan < ApplicationRecord
   end
 
   def next_payment_date
+    return nil if paid_off?
+
     (1..term_months).each do |month|
       due_date = start_date >> month
       period_start = month == 1 ? start_date : (start_date >> (month - 1)) + 1.day
