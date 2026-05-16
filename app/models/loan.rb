@@ -22,7 +22,7 @@ class Loan < ApplicationRecord
   end
 
   def remaining_balance(excluding: nil)
-    paid_principal = payments.where.not(id: excluding&.id).sum(:principal_applied)
+    paid_principal = cached_payments(excluding: excluding).sum(&:principal_applied)
     amount - paid_principal
   end
 
@@ -30,10 +30,9 @@ class Loan < ApplicationRecord
     period_start = period_start_for(date)
     balance = remaining_balance(excluding: excluding)
     period_interest = balance * monthly_rate
-    already_paid = payments
-      .where.not(id: excluding&.id)
-      .where(date: period_start..period_end_for(period_start))
-      .sum(:interest_applied)
+    already_paid = cached_payments(excluding: excluding)
+      .select { |p| p.date >= period_start && p.date <= period_end_for(period_start) }
+      .sum(&:interest_applied)
     [ period_interest - already_paid, 0 ].max
   end
 
@@ -43,9 +42,11 @@ class Loan < ApplicationRecord
     (1..term_months).each do |month|
       due_date = start_date >> month
       period_start = month == 1 ? start_date : (start_date >> (month - 1)) + 1.day
-      period_payments = payments.where(date: period_start..due_date).sum(:amount)
+      period_total = cached_payments
+        .select { |p| p.date >= period_start && p.date <= due_date }
+        .sum(&:amount)
 
-      if period_payments < monthly_payment
+      if period_total < monthly_payment
         return due_date
       end
     end
@@ -63,6 +64,15 @@ class Loan < ApplicationRecord
   end
 
   private
+  def cached_payments(excluding: nil)
+    all = payments.load
+    if excluding
+      all.reject { |p| p.id == excluding.id }
+    else
+      all
+    end
+  end
+
   def monthly_rate
     annual_interest_rate / 100 / 12
   end
