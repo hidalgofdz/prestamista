@@ -150,7 +150,8 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     get loans_path
 
     assert_response :success
-    assert_select "h2", /Liquidados/
+    assert_select "h2", text: /Activos/, count: 0
+    assert_select "[data-testid='next-payment']", count: 0
   end
 
   test "payment history is in reverse chronological order" do
