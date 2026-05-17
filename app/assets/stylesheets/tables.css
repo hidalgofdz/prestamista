@@ -1,0 +1,795 @@
+@layer components {
+  /* ===============================================================
+   * Data Table
+   *
+   * Composed of independent pieces so any subset can be used:
+   *   .table-wrap            shell + border + radius
+   *     .table-toolbar       title, search, bulk actions
+   *     .table-filters       filter chips
+   *     .table-bulkbar       contextual bar shown when rows selected
+   *     .table-scroll        horizontal-scroll viewport
+   *       .table             the <table> itself
+   *     .table-pagination    page controls + range
+   *     .table-state         empty / loading / error
+   *
+   * WCAG 2.2 AA:
+   *   1.3.1 — semantic <table>, <thead>, <th scope=col>
+   *   1.4.3 — body text uses --color-ink-dark; secondary uses
+   *           --color-ink-medium (≥4.5:1 on canvas in both themes)
+   *   2.4.7 — focus-visible on sort buttons, pagination, chips
+   *   2.5.8 — pagination & chip targets ≥24×24 (most ≥36×36)
+   *   4.1.3 — selection count + loading announce via aria-live
+   *   1.4.11 — borders/dividers ≥3:1 against canvas
+   * =============================================================== */
+  .table-wrap {
+    --table-radius: var(--radius-lg);
+    --table-divider: var(--color-ink-lightest);
+    --table-head-bg: oklch(from var(--color-canvas) calc(l - 0.018) c h);
+    --table-row-bg: var(--color-canvas);
+    --table-row-bg-hover: oklch(from var(--color-canvas) calc(l - 0.018) c h);
+    --table-row-bg-selected: var(--color-highlight);
+    --table-padding-inline: 1rem;
+    --table-padding-block: 0.625rem;
+    --table-toolbar-padding-block: 0.875rem;
+    --table-state-padding-block: 4rem;
+    --table-state-padding-inline: 1.5rem;
+    --table-cell-padding-block: 0.75rem;
+    --table-cell-padding-inline: 1rem;
+    --table-font-size: var(--text-base);
+    --table-z-head: 1;
+    --table-z-col: 2;
+    --table-z-corner: 3;
+
+    display: flex;
+    flex-direction: column;
+    background: var(--color-canvas);
+    border: var(--border);
+    border-radius: var(--table-radius);
+    overflow: hidden;
+    font-family: var(--font-sans);
+
+    html[data-theme="dark"] & {
+      --table-head-bg: oklch(from var(--color-canvas) calc(l + 0.025) c h);
+      --table-row-bg-hover: oklch(from var(--color-canvas) calc(l + 0.025) c h);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) & {
+        --table-head-bg: oklch(from var(--color-canvas) calc(l + 0.025) c h);
+        --table-row-bg-hover: oklch(from var(--color-canvas) calc(l + 0.025) c h);
+      }
+    }
+  }
+
+  /* ---------------------------------------------------------------
+   * Toolbar — sits above the table
+   * --------------------------------------------------------------- */
+  .table-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--inline-space);
+    padding: var(--table-toolbar-padding-block) var(--table-padding-inline);
+    border-block-end: 1px solid var(--table-divider);
+    background: var(--color-canvas);
+    flex-wrap: wrap;
+  }
+
+  .table-toolbar__title {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.625rem;
+    font-size: var(--text-medium);
+    font-weight: 600;
+    color: var(--color-ink-dark);
+    letter-spacing: -0.005em;
+    margin: 0;
+  }
+
+  .table-toolbar__count {
+    font-family: var(--font-mono);
+    font-size: var(--text-x-small);
+    color: var(--color-ink-medium);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+  }
+
+  .table-toolbar__actions {
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .table-toolbar__search {
+    /* Visually compresses .field for use inline in a toolbar. */
+    --field-min-block-size: 2.25rem;
+    --field-padding-block: 0.375rem;
+    --field-font-size: var(--text-small);
+    inline-size: 18rem;
+    max-inline-size: 100%;
+  }
+
+  /* ---------------------------------------------------------------
+   * Filter chips row
+   * --------------------------------------------------------------- */
+  .table-filters {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    flex-wrap: wrap;
+    padding: var(--table-padding-block) var(--table-padding-inline);
+    border-block-end: 1px solid var(--table-divider);
+    background: var(--color-canvas);
+  }
+
+  .table-filters__label {
+    font-family: var(--font-mono);
+    font-size: var(--text-x-small);
+    color: var(--color-ink-light);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-inline-end: 0.25rem;
+  }
+
+  .filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    appearance: none;
+    padding: 0.3125rem 0.75rem;
+    border: 1px solid var(--color-ink-lightest);
+    border-radius: var(--radius-full);
+    background: var(--color-canvas);
+    color: var(--color-ink-medium);
+    font: inherit;
+    font-size: var(--text-small);
+    font-weight: 500;
+    cursor: pointer;
+    min-block-size: 1.875rem;
+    transition: border-color 140ms ease,
+                background-color 140ms ease,
+                color 140ms ease;
+
+    &:hover {
+      border-color: var(--color-ink-light);
+      color: var(--color-ink-dark);
+    }
+
+    &[aria-pressed="true"] {
+      background: var(--color-selected);
+      border-color: var(--color-brand-600);
+      color: var(--color-brand-900);
+    }
+
+    &:focus-visible {
+      outline: var(--focus-ring-size) solid var(--focus-ring-color);
+      outline-offset: var(--focus-ring-offset);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+
+    html[data-theme="dark"] &[aria-pressed="true"] {
+      color: var(--color-brand-100);
+      border-color: var(--color-brand-500);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) &[aria-pressed="true"] {
+        color: var(--color-brand-100);
+        border-color: var(--color-brand-500);
+      }
+    }
+  }
+
+  .filter-chip__count {
+    font-family: var(--font-mono);
+    font-size: var(--text-x-small);
+    color: inherit;
+    opacity: 0.7;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------------------------------------------------------------
+   * Bulk actions bar — shown when one or more rows are selected.
+   * Pop in above the table head, replace the toolbar visually.
+   * --------------------------------------------------------------- */
+  .table-bulkbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--inline-space);
+    padding: var(--table-padding-block) var(--table-padding-inline);
+    background: var(--color-brand-700);
+    color: var(--color-ink-inverted);
+    font-size: var(--text-small);
+    flex-wrap: wrap;
+
+    html[data-theme="dark"] & {
+      background: var(--color-brand-500);
+      color: var(--color-stone-950);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) & {
+        background: var(--color-brand-500);
+        color: var(--color-stone-950);
+      }
+    }
+  }
+
+  .table-bulkbar__count {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+  }
+
+  .table-bulkbar__count strong {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .table-bulkbar__actions {
+    display: inline-flex;
+    gap: 0.375rem;
+    flex-wrap: wrap;
+  }
+
+  .table-bulkbar__btn {
+    appearance: none;
+    background: oklch(from currentColor l c h / 0.12);
+    border: 1px solid oklch(from currentColor l c h / 0.2);
+    color: inherit;
+    font: inherit;
+    font-size: var(--text-small);
+    font-weight: 500;
+    padding: 0.375rem 0.75rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    min-block-size: 1.875rem;
+
+    &:hover {
+      background: oklch(from currentColor l c h / 0.2);
+    }
+
+    &:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 2px;
+    }
+  }
+
+  /* ---------------------------------------------------------------
+   * Scroll container — horizontal scroll for overflow.
+   * Add .table--sticky-first to pin the first column for context.
+   * --------------------------------------------------------------- */
+  .table-scroll {
+    overflow-x: auto;
+    overflow-y: visible;
+    /* Reserve space so the sticky head doesn't shadow rows above. */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ---------------------------------------------------------------
+   * Table proper
+   * --------------------------------------------------------------- */
+  .table {
+    inline-size: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: var(--table-font-size);
+    color: var(--color-ink);
+    /* Min width keeps columns from collapsing inside narrow viewports. */
+  }
+
+  .table--compact {
+    --table-cell-padding-block: 0.4375rem;
+    --table-cell-padding-inline: 0.75rem;
+    --table-font-size: var(--text-small);
+  }
+
+  .table--comfortable {
+    --table-cell-padding-block: 1.125rem;
+    --table-cell-padding-inline: 1.125rem;
+  }
+
+  .table__cell {
+    padding-block: var(--table-cell-padding-block);
+    padding-inline: var(--table-cell-padding-inline);
+    text-align: start;
+    vertical-align: middle;
+    border-block-end: 1px solid var(--table-divider);
+    background: inherit;
+  }
+
+  .table__body .table__row:last-child > .table__cell {
+    border-block-end: 0;
+  }
+
+  /* Head ---------------------------------------------------------- */
+  .table__head .table__cell {
+    background: var(--table-head-bg);
+    color: var(--color-ink-medium);
+    font-size: var(--text-x-small);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    border-block-end: 1px solid var(--table-divider);
+    position: sticky;
+    inset-block-start: 0;
+    z-index: var(--table-z-head);
+  }
+
+  /* Sort button inside a th -------------------------------------- */
+  .table__sort {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    color: inherit;
+    font: inherit;
+    font-size: inherit;
+    text-transform: inherit;
+    letter-spacing: inherit;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+
+    &:hover {
+      color: var(--color-ink-dark);
+    }
+
+    &:focus-visible {
+      outline: var(--focus-ring-size) solid var(--focus-ring-color);
+      outline-offset: 2px;
+    }
+  }
+
+  .table__sort-icon {
+    inline-size: 0.875rem;
+    block-size: 0.875rem;
+    color: var(--color-ink-light);
+    flex: 0 0 auto;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* Sorted column: turn the active glyph brand, gray out the other.
+   * We stamp the icon with two paths and pick which one is brand-tinted
+   * via the data-direction attribute on the wrapping <th>. */
+  .table__cell[aria-sort="ascending"] {
+    color: var(--color-ink-dark);
+  }
+
+  .table__cell[aria-sort="ascending"] .table__sort-icon .up,
+  .table__cell[aria-sort="descending"] .table__sort-icon .down {
+    color: var(--color-brand-700);
+
+    html[data-theme="dark"] & {
+      color: var(--color-brand-400);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) & {
+        color: var(--color-brand-400);
+      }
+    }
+  }
+
+  .table__cell[aria-sort="descending"] {
+    color: var(--color-ink-dark);
+  }
+
+  /* Body rows ----------------------------------------------------- */
+  .table__body .table__row {
+    background: var(--table-row-bg);
+    transition: background-color 100ms ease;
+
+    &:hover {
+      background: var(--table-row-bg-hover);
+    }
+
+    &[aria-selected="true"] {
+      background: var(--table-row-bg-selected);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  /* Cell alignment modifiers ------------------------------------- */
+  .table__cell--num {
+    text-align: end;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: var(--text-small);
+    color: var(--color-ink-dark);
+  }
+
+  .table__cell--center {
+    text-align: center;
+  }
+
+  .table__cell--shrink {
+    inline-size: 1%;
+    white-space: nowrap;
+  }
+
+  .table__cell--select {
+    inline-size: 2.5rem;
+    padding-inline: 0.5rem 0.25rem;
+  }
+
+  /* Sticky first column ------------------------------------------ */
+  .table--sticky-first .table__cell:first-child {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: var(--table-z-col);
+    background: var(--table-row-bg);
+    border-inline-end: 1px solid var(--table-divider);
+  }
+
+  .table--sticky-first .table__head .table__cell:first-child {
+    z-index: var(--table-z-corner);
+    background: var(--table-head-bg);
+  }
+
+  .table--sticky-first .table__body .table__row:hover .table__cell:first-child {
+    background: var(--table-row-bg-hover);
+  }
+
+  .table--sticky-first .table__body .table__row[aria-selected="true"] .table__cell:first-child {
+    background: var(--table-row-bg-selected);
+  }
+
+  /* Hide column under a breakpoint ------------------------------- */
+  .table__cell--show-md { display: none; }
+  @media (min-width: 720px) {
+    .table__cell--show-md { display: table-cell; }
+  }
+
+  .table__cell--show-sm { display: none; }
+  @media (min-width: 540px) {
+    .table__cell--show-sm { display: table-cell; }
+  }
+
+  /* Primary cell — name with sub-line --------------------------- */
+  .table__primary {
+    display: flex;
+    flex-direction: column;
+    gap: 0.0625rem;
+    min-inline-size: 0;
+  }
+
+  .table__primary-title {
+    color: var(--color-ink-dark);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .table__primary-sub {
+    font-size: var(--text-x-small);
+    color: var(--color-ink-medium);
+    font-family: var(--font-mono);
+    letter-spacing: 0.01em;
+  }
+
+  /* Row-action button (inline trailing) -------------------------- */
+  .table__row-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    appearance: none;
+    background: transparent;
+    border: 0;
+    color: var(--color-ink-medium);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    padding: 0.375rem;
+    min-inline-size: 1.75rem;
+    min-block-size: 1.75rem;
+    line-height: 0;
+
+    &:hover {
+      background: var(--color-highlight);
+      color: var(--color-ink-dark);
+    }
+
+    &:focus-visible {
+      outline: var(--focus-ring-size) solid var(--focus-ring-color);
+      outline-offset: 1px;
+    }
+
+    & svg {
+      inline-size: 1rem;
+      block-size: 1rem;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.75;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+  }
+
+  /* Inline editing — overrides cell padding to keep height stable */
+  .table__cell--editing {
+    padding-block: calc(var(--table-cell-padding-block) - 0.25rem);
+    padding-inline: calc(var(--table-cell-padding-inline) - 0.25rem);
+    background: var(--color-canvas);
+  }
+
+  .table__edit {
+    inline-size: 100%;
+    font: inherit;
+    font-size: var(--table-font-size);
+    color: var(--color-ink-dark);
+    background: var(--color-canvas);
+    border: 1.5px solid var(--color-brand-600);
+    border-radius: var(--radius-sm);
+    padding: 0.375rem 0.5rem;
+    outline: none;
+    box-shadow: 0 0 0 var(--focus-ring-size) oklch(from var(--color-brand-600) l c h / 0.18);
+
+    &.table__edit--num {
+      text-align: end;
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+    }
+
+    html[data-theme="dark"] & {
+      border-color: var(--color-brand-400);
+      box-shadow: 0 0 0 var(--focus-ring-size) oklch(from var(--color-brand-400) l c h / 0.28);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) & {
+        border-color: var(--color-brand-400);
+        box-shadow: 0 0 0 var(--focus-ring-size) oklch(from var(--color-brand-400) l c h / 0.28);
+      }
+    }
+  }
+
+  /* ---------------------------------------------------------------
+   * Pagination
+   * --------------------------------------------------------------- */
+  .table-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--inline-space);
+    padding: var(--table-padding-block) var(--table-padding-inline);
+    border-block-start: 1px solid var(--table-divider);
+    background: var(--color-canvas);
+    font-size: var(--text-small);
+    color: var(--color-ink-medium);
+    flex-wrap: wrap;
+  }
+
+  .table-pagination__info {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .table-pagination__info strong {
+    color: var(--color-ink-dark);
+    font-weight: 600;
+  }
+
+  .table-pagination__size {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--text-small);
+    color: var(--color-ink-medium);
+  }
+
+  .table-pagination__size select {
+    appearance: none;
+    font: inherit;
+    font-size: var(--text-small);
+    color: var(--color-ink-dark);
+    background: var(--color-canvas);
+    border: 1px solid var(--color-ink-lightest);
+    border-radius: var(--radius-sm);
+    padding: 0.25rem 1.75rem 0.25rem 0.625rem;
+    cursor: pointer;
+    background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+                      linear-gradient(135deg, currentColor 50%, transparent 50%);
+    background-position: right 0.625rem center, right 0.375rem center;
+    background-size: 0.3125rem 0.3125rem;
+    background-repeat: no-repeat;
+  }
+
+  .table-pagination__controls {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.125rem;
+  }
+
+  .table-pagination__btn {
+    appearance: none;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    color: var(--color-ink-medium);
+    font: inherit;
+    font-size: var(--text-small);
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    min-inline-size: 2rem;
+    min-block-size: 2rem;
+    padding: 0 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 100ms ease, color 100ms ease;
+
+    &:hover:not(:disabled):not([aria-current="page"]) {
+      background: var(--color-highlight);
+      color: var(--color-ink-dark);
+    }
+
+    &[aria-current="page"] {
+      background: var(--color-selected);
+      color: var(--color-brand-900);
+      font-weight: 600;
+    }
+
+    &:disabled {
+      color: var(--color-ink-light);
+      cursor: not-allowed;
+    }
+
+    &:focus-visible {
+      outline: var(--focus-ring-size) solid var(--focus-ring-color);
+      outline-offset: 1px;
+    }
+
+    & svg {
+      inline-size: 1rem;
+      block-size: 1rem;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+
+    html[data-theme="dark"] &[aria-current="page"] {
+      color: var(--color-brand-100);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) &[aria-current="page"] {
+        color: var(--color-brand-100);
+      }
+    }
+  }
+
+  .table-pagination__ellipsis {
+    color: var(--color-ink-light);
+    padding-inline: 0.25rem;
+    user-select: none;
+  }
+
+  /* ---------------------------------------------------------------
+   * Empty / loading / error states
+   * --------------------------------------------------------------- */
+  .table-state {
+    padding: var(--table-state-padding-block) var(--table-state-padding-inline);
+    text-align: center;
+    color: var(--color-ink-medium);
+  }
+
+  .table-state__icon {
+    inline-size: 2.25rem;
+    block-size: 2.25rem;
+    color: var(--color-ink-light);
+    margin-block-end: 0.875rem;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .table-state__title {
+    color: var(--color-ink-dark);
+    font-size: var(--text-medium);
+    font-weight: 600;
+    margin: 0 0 0.375rem;
+    letter-spacing: -0.005em;
+  }
+
+  .table-state__body {
+    margin: 0 auto;
+    max-inline-size: 28rem;
+    font-size: var(--text-base);
+    color: var(--color-ink-medium);
+    line-height: 1.5;
+    text-wrap: pretty;
+  }
+
+  .table-state__actions {
+    margin-block-start: 1.125rem;
+    display: inline-flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* Error state: shift the icon to danger */
+  .table-state--error .table-state__icon {
+    color: var(--color-danger-600);
+
+    html[data-theme="dark"] & {
+      color: var(--color-danger-500);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) & {
+        color: var(--color-danger-500);
+      }
+    }
+  }
+
+  /* Loading: skeleton bars in the body */
+  .table__skeleton {
+    display: inline-block;
+    inline-size: 100%;
+    max-inline-size: 100%;
+    block-size: 0.75rem;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(
+      90deg,
+      var(--color-ink-lightest) 0%,
+      oklch(from var(--color-ink-lightest) calc(l + 0.05) c h) 50%,
+      var(--color-ink-lightest) 100%
+    );
+    background-size: 200% 100%;
+    animation: table-skeleton 1.4s ease-in-out infinite;
+  }
+
+  .table__skeleton--short { inline-size: 40%; }
+  .table__skeleton--medium { inline-size: 65%; }
+  .table__skeleton--num {
+    inline-size: 4rem;
+    block-size: 0.6875rem;
+  }
+  .table__skeleton--pill {
+    inline-size: 4.5rem;
+    block-size: 1.125rem;
+    border-radius: var(--radius-full);
+  }
+  .table__skeleton--circle {
+    inline-size: 1.125rem;
+    block-size: 1.125rem;
+    border-radius: var(--radius-full);
+  }
+
+  @keyframes table-skeleton {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .table__skeleton {
+      animation: none;
+    }
+  }
+
+}
