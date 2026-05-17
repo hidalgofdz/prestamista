@@ -59,8 +59,6 @@ en:
       record_payment: "Record payment"
       submit_payment: "Record"
       payment_history: "Payment history"
-      payment_date: "Date"
-      payment_amount: "Amount"
       payment_principal: "Principal"
       payment_interest: "Interest"
       edit: "Edit"

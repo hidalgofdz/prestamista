@@ -17,7 +17,7 @@ class PaymentsTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "dd p", /9,166.67/
-    assert_select "#payments td", /933.33/
+    assert_select "#payments .payment-list__amount", /933.33/
   end
 
   test "partial payment applies interest first then principal" do
@@ -28,7 +28,7 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     follow_redirect!
 
     assert_select "dd p", /9,900.00/
-    assert_select "#payments td", /100.00/
+    assert_select "#payments .payment-list__split", /100.00/
   end
 
   test "payment less than interest due applies entirely to interest" do
@@ -165,7 +165,7 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     get loan_path(@loan)
 
     assert_response :success
-    dates = css_select("#payments tbody tr td:first-child").map(&:text)
+    dates = css_select("#payments .payment-list__date").map(&:text)
     assert_equal 2, dates.length
     assert dates.first.include?("julio") || dates.first.include?("07"), "Expected July first, got: #{dates.first}"
   end

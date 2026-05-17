@@ -59,8 +59,6 @@ es-MX:
       record_payment: "Registrar pago"
       submit_payment: "Registrar"
       payment_history: "Historial de pagos"
-      payment_date: "Fecha"
-      payment_amount: "Monto"
       payment_principal: "Capital"
       payment_interest: "Interés"
       edit: "Editar"
