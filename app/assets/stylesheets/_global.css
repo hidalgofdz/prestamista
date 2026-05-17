@@ -39,6 +39,16 @@
     --color-danger-800: oklch(0.45 0.16 25);
     --color-danger-900: oklch(0.40 0.13 25);
 
+    /* Status semantic colors — bg/fg pairs for tags, alerts, badges */
+    --color-success-bg: oklch(0.95 0.05 145);
+    --color-success-fg: oklch(0.38 0.12 145);
+    --color-warning-bg: oklch(0.95 0.06 80);
+    --color-warning-fg: oklch(0.45 0.13 60);
+    --color-danger-bg:  oklch(0.94 0.05 25);
+    --color-danger-fg:  var(--color-danger-700);
+    --color-info-bg:    oklch(0.95 0.04 230);
+    --color-info-fg:    oklch(0.42 0.13 240);
+
     /* Semantic surfaces */
     --color-canvas: var(--color-stone-50);
     --color-ink: var(--color-stone-900);
@@ -52,6 +62,9 @@
     --color-positive: oklch(0.55 0.17 145);
     --color-selected: var(--color-brand-100);
     --color-highlight: var(--color-brand-50);
+    --color-canvas-raised: oklch(0.95 0.005 75);
+    --color-canvas-hover: oklch(0.97 0.005 75);
+    --color-canvas-sunken: oklch(0.96 0.005 75);
 
     /* Spacing */
     --inline-space: 1rem;
@@ -109,9 +122,20 @@
     --color-negative: var(--color-danger-500);
     --color-selected: oklch(0.30 0.06 50);
     --color-highlight: oklch(0.25 0.04 50);
+    --color-canvas-raised: oklch(0.27 0.01 50);
+    --color-canvas-hover: oklch(0.24 0.01 50);
+    --color-canvas-sunken: oklch(0.235 0.01 50);
     --focus-ring-color: var(--color-brand-400);
     --shadow: 0 1px 3px oklch(0 0 0 / 0.4), 0 1px 2px oklch(0 0 0 / 0.3);
     --border: 1px solid var(--color-stone-700);
+    --color-success-bg: oklch(0.28 0.06 145);
+    --color-success-fg: oklch(0.85 0.13 145);
+    --color-warning-bg: oklch(0.30 0.07 65);
+    --color-warning-fg: oklch(0.86 0.13 75);
+    --color-danger-bg:  oklch(0.32 0.08 25);
+    --color-danger-fg:  oklch(0.84 0.13 25);
+    --color-info-bg:    oklch(0.28 0.06 240);
+    --color-info-fg:    oklch(0.85 0.12 230);
 
     color-scheme: dark;
   }
@@ -129,9 +153,20 @@
       --color-negative: var(--color-danger-500);
       --color-selected: oklch(0.30 0.06 50);
       --color-highlight: oklch(0.25 0.04 50);
+      --color-canvas-raised: oklch(0.27 0.01 50);
+      --color-canvas-hover: oklch(0.24 0.01 50);
+      --color-canvas-sunken: oklch(0.235 0.01 50);
       --focus-ring-color: var(--color-brand-400);
       --shadow: 0 1px 3px oklch(0 0 0 / 0.4), 0 1px 2px oklch(0 0 0 / 0.3);
       --border: 1px solid var(--color-stone-700);
+      --color-success-bg: oklch(0.28 0.06 145);
+      --color-success-fg: oklch(0.85 0.13 145);
+      --color-warning-bg: oklch(0.30 0.07 65);
+      --color-warning-fg: oklch(0.86 0.13 75);
+      --color-danger-bg:  oklch(0.32 0.08 25);
+      --color-danger-fg:  oklch(0.84 0.13 25);
+      --color-info-bg:    oklch(0.28 0.06 240);
+      --color-info-fg:    oklch(0.85 0.12 230);
 
       color-scheme: dark;
     }
