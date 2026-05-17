@@ -24,7 +24,7 @@
     --choice-fill: var(--color-brand-700);
     --choice-fill-hover: var(--color-brand-800);
     --choice-mark: var(--color-ink-inverted);
-    --choice-ring: oklch(from var(--color-brand-600) l c h / 0.22);
+    --choice-ring: oklch(0.64 0.16 55 / 0.22);
     --choice-label-fg: var(--color-ink-dark);
     --choice-hint-fg: var(--color-ink-medium);
     --choice-gap: 0.625rem;
@@ -45,7 +45,7 @@
       --choice-fill: var(--color-brand-500);
       --choice-fill-hover: var(--color-brand-400);
       --choice-mark: var(--color-stone-950);
-      --choice-ring: oklch(from var(--color-brand-400) l c h / 0.28);
+      --choice-ring: oklch(0.79 0.16 75 / 0.28);
     }
 
     @media (prefers-color-scheme: dark) {
@@ -55,7 +55,7 @@
         --choice-fill: var(--color-brand-500);
         --choice-fill-hover: var(--color-brand-400);
         --choice-mark: var(--color-stone-950);
-        --choice-ring: oklch(from var(--color-brand-400) l c h / 0.28);
+        --choice-ring: oklch(0.79 0.16 75 / 0.28);
       }
     }
   }
@@ -221,20 +221,10 @@
     font-family: var(--font-mono);
     font-size: var(--text-x-small);
     color: var(--color-ink-medium);
-    background: oklch(from var(--color-canvas) calc(l - 0.03) c h);
+    background: var(--color-canvas-raised);
     border-radius: var(--radius-sm);
     padding: 0.05rem 0.4rem;
     vertical-align: 0.05em;
-
-    html[data-theme="dark"] & {
-      background: oklch(from var(--color-canvas) calc(l + 0.05) c h);
-    }
-
-    @media (prefers-color-scheme: dark) {
-      html:not([data-theme]) & {
-        background: oklch(from var(--color-canvas) calc(l + 0.05) c h);
-      }
-    }
   }
 
   /* ---------------------------------------------------------------
@@ -283,7 +273,7 @@
     @media (any-hover: hover) {
       &:hover {
         border-color: var(--color-ink-light);
-        background: oklch(from var(--color-canvas) calc(l - 0.01) c h);
+        background: var(--color-canvas-hover);
       }
     }
 
@@ -305,39 +295,13 @@
     }
 
     &:has(.choice__input:disabled) {
-      background: oklch(from var(--color-canvas) calc(l - 0.02) c h);
+      background: var(--color-canvas-sunken);
       border-color: var(--color-ink-lightest);
       cursor: not-allowed;
     }
 
     @media (prefers-reduced-motion: reduce) {
       transition: none;
-    }
-
-    html[data-theme="dark"] & {
-      @media (any-hover: hover) {
-        &:hover {
-          background: oklch(from var(--color-canvas) calc(l + 0.02) c h);
-        }
-      }
-
-      &:has(.choice__input:disabled) {
-        background: oklch(from var(--color-canvas) calc(l + 0.015) c h);
-      }
-    }
-
-    @media (prefers-color-scheme: dark) {
-      html:not([data-theme]) & {
-        @media (any-hover: hover) {
-          &:hover {
-            background: oklch(from var(--color-canvas) calc(l + 0.02) c h);
-          }
-        }
-
-        &:has(.choice__input:disabled) {
-          background: oklch(from var(--color-canvas) calc(l + 0.015) c h);
-        }
-      }
     }
   }
 
@@ -398,7 +362,7 @@
   .choice-group__hint {
     font-size: var(--text-x-small);
     color: var(--color-ink-medium);
-    margin: 0 0 0.25rem;
+    margin-block-end: 0.25rem;
     text-wrap: pretty;
   }
 
@@ -450,8 +414,10 @@
     & .choice--card {
       border-color: var(--color-danger-500);
 
-      &:hover {
-        border-color: var(--color-danger-600);
+      @media (any-hover: hover) {
+        &:hover {
+          border-color: var(--color-danger-600);
+        }
       }
     }
   }
