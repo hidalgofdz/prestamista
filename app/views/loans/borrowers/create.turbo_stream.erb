@@ -1,8 +1,8 @@
 <%= turbo_stream.replace "borrower_select_wrapper" do %>
-  <div id="borrower_select_wrapper" style="display: contents">
+  <div id="borrower_select_wrapper">
     <%= select_tag "loan[borrower_id]",
       options_from_collection_for_select(@account.borrowers.order(:name), :id, :name, @borrower.id),
-      prompt: t("loans.form.select_borrower"),
+      include_blank: t("loans.form.select_borrower"),
       id: "loan_borrower_id",
       class: "field__input" %>
   </div>

@@ -389,4 +389,8 @@
     --field-border-focus: var(--field-border);
     --field-ring: transparent;
   }
+
+  #borrower_select_wrapper {
+    display: contents;
+  }
 }

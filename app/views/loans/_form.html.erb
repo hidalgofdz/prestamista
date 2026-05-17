@@ -12,7 +12,7 @@
   <div class="field">
     <%= f.label :borrower_id, class: "field__label" %>
     <div class="field__control">
-      <div id="borrower_select_wrapper" style="display: contents">
+      <div id="borrower_select_wrapper">
         <%= f.collection_select :borrower_id, @account.borrowers.order(:name), :id, :name, { prompt: t(".select_borrower") }, { class: "field__input" } %>
       </div>
     </div>
