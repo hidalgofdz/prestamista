@@ -29,13 +29,17 @@
 
 <h2><%= t(".record_payment") %></h2>
 <%= form_with model: Payment.new, url: loan_payments_path(@loan) do |f| %>
-  <div>
-    <%= f.label :amount %>
-    <%= f.number_field :amount, step: "0.01" %>
+  <div class="field">
+    <%= f.label :amount, class: "field__label" %>
+    <div class="field__control">
+      <%= f.number_field :amount, step: "0.01", class: "field__input" %>
+    </div>
   </div>
-  <div>
-    <%= f.label :date %>
-    <%= f.date_field :date, value: Date.current %>
+  <div class="field">
+    <%= f.label :date, class: "field__label" %>
+    <div class="field__control">
+      <%= f.date_field :date, value: Date.current, class: "field__input" %>
+    </div>
   </div>
   <div>
     <%= f.submit t(".submit_payment"), class: "btn btn--primary" %>
