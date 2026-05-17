@@ -1,0 +1,79 @@
+@layer components {
+  /* ===============================================================
+   * Tag — small status pill. Used inside tables but also reusable.
+   * Each variant pre-tinted; dot inherits from currentColor.
+   * Tinted bg + dark fg keeps non-text contrast ≥3:1 in both themes.
+   * =============================================================== */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.125rem 0.5rem 0.125rem 0.4375rem;
+    border-radius: var(--radius-full);
+    background: var(--color-ink-lightest);
+    color: var(--color-ink-medium);
+    font-size: var(--text-x-small);
+    font-weight: 500;
+    line-height: 1.4;
+    white-space: nowrap;
+    letter-spacing: 0.01em;
+
+    &::before {
+      content: "";
+      inline-size: 0.4em;
+      block-size: 0.4em;
+      border-radius: var(--radius-full);
+      background: currentColor;
+      flex: 0 0 auto;
+    }
+
+    :where(html[data-theme="dark"]) & {
+      background: oklch(from var(--color-canvas) calc(l + 0.06) c h);
+      color: var(--color-ink-medium);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :where(html:not([data-theme])) & {
+        background: oklch(from var(--color-canvas) calc(l + 0.06) c h);
+        color: var(--color-ink-medium);
+      }
+    }
+  }
+
+  .tag--success {
+    background: var(--color-success-bg);
+    color: var(--color-success-fg);
+  }
+
+  .tag--warning {
+    background: var(--color-warning-bg);
+    color: var(--color-warning-fg);
+  }
+
+  .tag--danger {
+    background: var(--color-danger-bg);
+    color: var(--color-danger-fg);
+  }
+
+  .tag--brand {
+    background: var(--color-brand-50);
+    color: var(--color-brand-800);
+
+    html[data-theme="dark"] & {
+      background: var(--color-brand-950);
+      color: var(--color-brand-100);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) & {
+        background: var(--color-brand-950);
+        color: var(--color-brand-100);
+      }
+    }
+  }
+
+  .tag--info {
+    background: var(--color-info-bg);
+    color: var(--color-info-fg);
+  }
+}

@@ -1,10 +1,52 @@
-<h1><%= t(".title") %></h1>
-
-<%= link_to t(".new"), new_borrower_path, class: "btn btn--primary" %>
-
-<% @borrowers.each do |borrower| %>
-  <div>
-    <%= link_to borrower.name, borrower_path(borrower) %>
-    <span><%= borrower.phone %></span>
+<div class="table-wrap">
+  <div class="table-toolbar">
+    <h1 class="table-toolbar__title">
+      <%= t(".title") %>
+      <span class="table-toolbar__count"><%= @borrowers.size %></span>
+    </h1>
+    <div class="table-toolbar__actions">
+      <%= link_to t(".new"), new_borrower_path, class: "btn btn--primary" %>
+    </div>
   </div>
-<% end %>
+
+  <% if @borrowers.any? %>
+    <div class="table-scroll">
+      <table class="table">
+        <thead class="table__head">
+          <tr class="table__row">
+            <th class="table__cell" scope="col"><%= t(".col_name") %></th>
+            <th class="table__cell" scope="col"><%= t(".col_phone") %></th>
+            <th class="table__cell table__cell--num table__cell--show-sm" scope="col"><%= t(".col_loans") %></th>
+          </tr>
+        </thead>
+        <tbody class="table__body">
+          <% @borrowers.each do |borrower| %>
+            <tr class="table__row">
+              <td class="table__cell">
+                <div class="table__primary">
+                  <span class="table__primary-title"><%= link_to borrower.name, borrower_path(borrower) %></span>
+                </div>
+              </td>
+              <td class="table__cell"><%= borrower.phone %></td>
+              <td class="table__cell table__cell--num table__cell--show-sm"><%= borrower.loans.size %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="table-state">
+      <svg class="table-state__icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+      <p class="table-state__title"><%= t(".empty") %></p>
+      <p class="table-state__body"><%= t(".empty_body") %></p>
+      <div class="table-state__actions">
+        <%= link_to t(".new"), new_borrower_path, class: "btn btn--primary" %>
+      </div>
+    </div>
+  <% end %>
+</div>

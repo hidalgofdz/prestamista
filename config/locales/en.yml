@@ -38,6 +38,15 @@ en:
       paid_off: "Paid off"
       overdue: "Overdue (%{date})"
       empty: "You don't have any loans yet."
+      empty_body: "Create your first loan to start tracking payments."
+      col_borrower: "Borrower"
+      col_amount: "Amount"
+      col_start_date: "Start date"
+      col_next_payment: "Next payment"
+      col_status: "Status"
+      status_active: "Active"
+      status_overdue: "Overdue"
+      status_paid_off: "Paid off"
     show:
       amount: "Amount"
       annual_interest_rate: "Annual interest rate"
@@ -93,6 +102,11 @@ en:
     index:
       title: "Borrowers"
       new: "New borrower"
+      empty: "No borrowers yet."
+      empty_body: "Add your first borrower to start tracking loans."
+      col_name: "Name"
+      col_phone: "Phone"
+      col_loans: "Loans"
     show:
       edit: "Edit"
       back: "Back"
