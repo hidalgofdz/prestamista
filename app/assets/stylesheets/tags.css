@@ -27,13 +27,13 @@
       flex: 0 0 auto;
     }
 
-    html[data-theme="dark"] & {
+    :where(html[data-theme="dark"]) & {
       background: oklch(from var(--color-canvas) calc(l + 0.06) c h);
       color: var(--color-ink-medium);
     }
 
     @media (prefers-color-scheme: dark) {
-      html:not([data-theme]) & {
+      :where(html:not([data-theme])) & {
         background: oklch(from var(--color-canvas) calc(l + 0.06) c h);
         color: var(--color-ink-medium);
       }

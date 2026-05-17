@@ -10,17 +10,19 @@
   </div>
 
   <% if @active_loans.any? || @paid_off_loans.any? %>
-    <nav class="table-filters" aria-label="<%= t(".title") %>">
-      <span class="table-filters__label"><%= t(".col_status") %></span>
-      <button class="filter-chip" aria-pressed="false" data-filter="active" data-table-filter-target="chip" data-action="table-filter#filter">
-        <%= t(".active_title") %>
-        <span class="filter-chip__count"><%= @active_loans.size %></span>
-      </button>
-      <button class="filter-chip" aria-pressed="false" data-filter="paid_off" data-table-filter-target="chip" data-action="table-filter#filter">
-        <%= t(".paid_off_title") %>
-        <span class="filter-chip__count"><%= @paid_off_loans.size %></span>
-      </button>
-    </nav>
+    <% if @active_loans.any? && @paid_off_loans.any? %>
+      <nav class="table-filters" aria-label="<%= t(".title") %>">
+        <span class="table-filters__label"><%= t(".col_status") %></span>
+        <button class="filter-chip" aria-pressed="false" data-filter="active" data-table-filter-target="chip" data-action="table-filter#filter">
+          <%= t(".active_title") %>
+          <span class="filter-chip__count"><%= @active_loans.size %></span>
+        </button>
+        <button class="filter-chip" aria-pressed="false" data-filter="paid_off" data-table-filter-target="chip" data-action="table-filter#filter">
+          <%= t(".paid_off_title") %>
+          <span class="filter-chip__count"><%= @paid_off_loans.size %></span>
+        </button>
+      </nav>
+    <% end %>
 
     <div class="table-scroll">
       <table class="table">
