@@ -1,4 +1,4 @@
-<div class="table-wrap">
+<div class="table-wrap" data-controller="table-filter">
   <div class="table-toolbar">
     <h1 class="table-toolbar__title">
       <%= t(".title") %>
@@ -12,11 +12,11 @@
   <% if @active_loans.any? || @paid_off_loans.any? %>
     <nav class="table-filters" aria-label="<%= t(".title") %>">
       <span class="table-filters__label"><%= t(".col_status") %></span>
-      <button class="filter-chip" aria-pressed="true" data-filter="all">
+      <button class="filter-chip" aria-pressed="false" data-filter="active" data-table-filter-target="chip" data-action="table-filter#filter">
         <%= t(".active_title") %>
         <span class="filter-chip__count"><%= @active_loans.size %></span>
       </button>
-      <button class="filter-chip" aria-pressed="false" data-filter="paid_off">
+      <button class="filter-chip" aria-pressed="false" data-filter="paid_off" data-table-filter-target="chip" data-action="table-filter#filter">
         <%= t(".paid_off_title") %>
         <span class="filter-chip__count"><%= @paid_off_loans.size %></span>
       </button>
@@ -35,7 +35,8 @@
         </thead>
         <tbody class="table__body">
           <% @active_loans.each do |loan| %>
-            <tr class="table__row">
+            <% overdue = loan.overdue? %>
+            <tr class="table__row" data-table-filter-target="row" data-filter-group="active">
               <td class="table__cell">
                 <div class="table__primary">
                   <span class="table__primary-title"><%= link_to loan.borrower.name, loan_path(loan) %></span>
@@ -44,14 +45,12 @@
               <td class="table__cell table__cell--num"><%= number_to_currency(loan.amount, unit: "$", separator: ".", delimiter: ",") %></td>
               <td class="table__cell table__cell--show-md"><%= l(loan.start_date) %></td>
               <td class="table__cell table__cell--show-sm" data-testid="next-payment">
-                <% if loan.overdue? %>
-                  <%= l(loan.next_payment_date) %>
-                <% elsif loan.next_payment_date %>
+                <% if loan.next_payment_date %>
                   <%= l(loan.next_payment_date) %>
                 <% end %>
               </td>
               <td class="table__cell">
-                <% if loan.overdue? %>
+                <% if overdue %>
                   <span class="tag tag--danger"><%= t(".status_overdue") %></span>
                 <% else %>
                   <span class="tag tag--success"><%= t(".status_active") %></span>
@@ -60,7 +59,7 @@
             </tr>
           <% end %>
           <% @paid_off_loans.each do |loan| %>
-            <tr class="table__row">
+            <tr class="table__row" data-table-filter-target="row" data-filter-group="paid_off">
               <td class="table__cell">
                 <div class="table__primary">
                   <span class="table__primary-title"><%= link_to loan.borrower.name, loan_path(loan) %></span>

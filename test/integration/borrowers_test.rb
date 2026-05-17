@@ -86,6 +86,16 @@ class BorrowersTest < ActionDispatch::IntegrationTest
     assert_select "a", text: "Someone Else", count: 0
   end
 
+  test "empty state when lender has no borrowers" do
+    sign_in_as users(:empty_lender)
+
+    get borrowers_path
+
+    assert_response :success
+    assert_select ".table-state__title", /no hay prestatarios/i
+    assert_select "a[href='#{new_borrower_path}']"
+  end
+
   test "creating a borrower without name or phone shows validation errors" do
     post borrowers_path, params: {
       borrower: { name: "", phone: "" }
