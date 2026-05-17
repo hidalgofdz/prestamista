@@ -41,7 +41,7 @@ es-MX:
       empty_body: "Crea tu primer préstamo para comenzar a rastrear pagos."
       col_borrower: "Prestatario"
       col_amount: "Monto"
-      col_start_date: "Fecha inicio"
+      col_start_date: "Fecha de inicio"
       col_next_payment: "Próximo pago"
       col_status: "Estado"
       status_active: "Activo"

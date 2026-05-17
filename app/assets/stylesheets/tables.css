@@ -451,12 +451,12 @@
 
   /* Hide column under a breakpoint ------------------------------- */
   .table__cell--show-md { display: none; }
-  @media (min-width: 720px) {
+  @media (min-width: 800px) {
     .table__cell--show-md { display: table-cell; }
   }
 
   .table__cell--show-sm { display: none; }
-  @media (min-width: 540px) {
+  @media (min-width: 640px) {
     .table__cell--show-sm { display: table-cell; }
   }
 
