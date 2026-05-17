@@ -40,7 +40,9 @@ es-MX:
       empty: "No tienes préstamos registrados."
       empty_body: "Crea tu primer préstamo para comenzar a rastrear pagos."
       col_status: "Estado"
-      term_format: "%{months} meses"
+      term_format:
+        one: "%{count} mes"
+        other: "%{count} meses"
       next_payment_label: "Próximo pago:"
       status_active: "Activo"
       status_overdue: "Vencido"

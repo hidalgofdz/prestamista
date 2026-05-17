@@ -40,7 +40,9 @@ en:
       empty: "You don't have any loans yet."
       empty_body: "Create your first loan to start tracking payments."
       col_status: "Status"
-      term_format: "%{months} months"
+      term_format:
+        one: "%{count} month"
+        other: "%{count} months"
       next_payment_label: "Next payment:"
       status_active: "Active"
       status_overdue: "Overdue"

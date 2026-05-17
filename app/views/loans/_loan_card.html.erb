@@ -11,7 +11,7 @@
     <%= l(loan.start_date) %>
     ·
     <span class="visually-hidden"><%= t("loans.index.term_label") %></span>
-    <%= t("loans.index.term_format", months: loan.term_months) %>
+    <%= t("loans.index.term_format", count: loan.term_months) %>
   </p>
   <div class="loan-card__footer">
     <% if paid_off %>
