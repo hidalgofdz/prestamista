@@ -45,7 +45,7 @@
                   <span class="table__primary-title"><%= link_to loan.borrower.name, loan_path(loan) %></span>
                 </div>
               </td>
-              <td class="table__cell table__cell--num"><%= number_to_currency(loan.amount, unit: "$", separator: ".", delimiter: ",") %></td>
+              <td class="table__cell table__cell--num"><%= currency(loan.amount) %></td>
               <td class="table__cell table__cell--show-md"><%= l(loan.start_date) %></td>
               <td class="table__cell" data-testid="next-payment">
                 <% if next_payment %>
@@ -68,7 +68,7 @@
                   <span class="table__primary-title"><%= link_to loan.borrower.name, loan_path(loan) %></span>
                 </div>
               </td>
-              <td class="table__cell table__cell--num"><%= number_to_currency(loan.amount, unit: "$", separator: ".", delimiter: ",") %></td>
+              <td class="table__cell table__cell--num"><%= currency(loan.amount) %></td>
               <td class="table__cell table__cell--show-md"><%= l(loan.start_date) %></td>
               <td class="table__cell">&mdash;</td>
               <td class="table__cell">
