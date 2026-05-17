@@ -1,0 +1,33 @@
+<%= link_to loan_path(loan), class: "loan-card" do %>
+  <div class="loan-card__header">
+    <span class="loan-card__borrower"><%= loan.borrower.name %></span>
+    <span class="loan-card__amount">
+      <span class="visually-hidden"><%= t("loans.index.amount_label") %></span>
+      <%= currency(loan.amount) %>
+    </span>
+  </div>
+  <p class="loan-card__subtitle">
+    <span class="visually-hidden"><%= t("loans.index.start_date_label") %></span>
+    <%= l(loan.start_date) %>
+    ·
+    <span class="visually-hidden"><%= t("loans.index.term_label") %></span>
+    <%= t("loans.index.term_format", count: loan.term_months) %>
+  </p>
+  <div class="loan-card__footer">
+    <% if paid_off %>
+      <span class="loan-card__next-payment">&mdash;</span>
+      <span class="tag tag--brand"><%= t("loans.index.status_paid_off") %></span>
+    <% else %>
+      <span class="loan-card__next-payment" data-testid="next-payment">
+        <% if next_payment %>
+          <%= t("loans.index.next_payment_label") %> <%= l(next_payment) %>
+        <% end %>
+      </span>
+      <% if overdue %>
+        <span class="tag tag--danger"><%= t("loans.index.status_overdue") %></span>
+      <% else %>
+        <span class="tag tag--success"><%= t("loans.index.status_active") %></span>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

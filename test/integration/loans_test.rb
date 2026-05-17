@@ -10,8 +10,8 @@ class LoansTest < ActionDispatch::IntegrationTest
     get loans_path
 
     assert_response :success
-    assert_select "a", /Aaron/
-    assert_select "td", /10,000/
+    assert_select ".loan-card__borrower", /Aaron/
+    assert_select ".loan-card__amount", /10,000/
   end
 
   test "lender views a loan with calculated summary" do

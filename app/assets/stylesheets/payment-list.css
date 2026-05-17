@@ -1,0 +1,42 @@
+@layer components {
+  .payment-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .payment-list__item {
+    padding: var(--inline-space);
+    border-block-end: 1px solid var(--color-ink-lightest);
+
+    &:last-child {
+      border-block-end: 0;
+    }
+  }
+
+  .payment-list__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .payment-list__date {
+    color: var(--color-ink-dark);
+    font-weight: 500;
+  }
+
+  .payment-list__amount {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink-dark);
+    font-weight: 600;
+  }
+
+  .payment-list__split {
+    margin-block: 0.25rem 0;
+    font-size: var(--text-small);
+    font-family: var(--font-mono);
+    color: var(--color-ink-medium);
+    text-align: end;
+  }
+}
