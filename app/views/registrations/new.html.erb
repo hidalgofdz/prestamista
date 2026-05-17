@@ -5,14 +5,18 @@
 <% end %>
 
 <%= form_with url: registration_path, scope: :registration do |f| %>
-  <div>
-    <%= f.label :name %>
-    <%= f.text_field :name, autofocus: true %>
+  <div class="field">
+    <%= f.label :name, class: "field__label" %>
+    <div class="field__control">
+      <%= f.text_field :name, autofocus: true, class: "field__input" %>
+    </div>
   </div>
 
-  <div>
-    <%= f.label :email %>
-    <%= f.email_field :email %>
+  <div class="field">
+    <%= f.label :email, class: "field__label" %>
+    <div class="field__control">
+      <%= f.email_field :email, class: "field__input" %>
+    </div>
   </div>
 
   <div>

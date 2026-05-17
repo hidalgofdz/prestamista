@@ -9,10 +9,12 @@
     </div>
   <% end %>
 
-  <div>
-    <%= f.label :borrower_id %>
-    <div id="borrower_select_wrapper">
-      <%= f.collection_select :borrower_id, @account.borrowers.order(:name), :id, :name, { prompt: t(".select_borrower") } %>
+  <div class="field">
+    <%= f.label :borrower_id, class: "field__label" %>
+    <div class="field__control">
+      <div id="borrower_select_wrapper" style="display: contents">
+        <%= f.collection_select :borrower_id, @account.borrowers.order(:name), :id, :name, { prompt: t(".select_borrower") }, { class: "field__input" } %>
+      </div>
     </div>
 
     <% if local_assigns.fetch(:allow_new_borrower, false) %>
@@ -24,24 +26,32 @@
     <% end %>
   </div>
 
-  <div>
-    <%= f.label :amount %>
-    <%= f.number_field :amount, step: "0.01" %>
+  <div class="field">
+    <%= f.label :amount, class: "field__label" %>
+    <div class="field__control">
+      <%= f.number_field :amount, step: "0.01", class: "field__input" %>
+    </div>
   </div>
 
-  <div>
-    <%= f.label :annual_interest_rate %>
-    <%= f.number_field :annual_interest_rate, step: "0.01", min: "0" %>
+  <div class="field">
+    <%= f.label :annual_interest_rate, class: "field__label" %>
+    <div class="field__control">
+      <%= f.number_field :annual_interest_rate, step: "0.01", min: "0", class: "field__input" %>
+    </div>
   </div>
 
-  <div>
-    <%= f.label :term_months %>
-    <%= f.number_field :term_months, step: "1", min: "1" %>
+  <div class="field">
+    <%= f.label :term_months, class: "field__label" %>
+    <div class="field__control">
+      <%= f.number_field :term_months, step: "1", min: "1", class: "field__input" %>
+    </div>
   </div>
 
-  <div>
-    <%= f.label :start_date %>
-    <%= f.date_field :start_date %>
+  <div class="field">
+    <%= f.label :start_date, class: "field__label" %>
+    <div class="field__control">
+      <%= f.date_field :start_date, class: "field__input" %>
+    </div>
   </div>
 
   <div>
