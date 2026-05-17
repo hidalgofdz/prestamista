@@ -404,11 +404,15 @@
     }
   }
 
-  /* Error state — re-tints borders of every contained .choice. */
+  /* Error state — re-tints borders and fill of every contained .choice.
+   * Fill is overridden so checked indicators and card borders stay danger-
+   * colored; without this they revert to --choice-fill (brand). */
   .choice-group--error {
     & .choice {
       --choice-border: var(--color-danger-500);
       --choice-border-hover: var(--color-danger-600);
+      --choice-fill: var(--color-danger-500);
+      --choice-fill-hover: var(--color-danger-600);
     }
 
     & .choice--card {
