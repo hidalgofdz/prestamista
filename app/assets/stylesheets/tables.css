@@ -18,7 +18,6 @@
    *           --color-ink-medium (≥4.5:1 on canvas in both themes)
    *   2.4.7 — focus-visible on sort buttons, pagination, chips
    *   2.5.8 — pagination & chip targets ≥24×24 (most ≥36×36)
-   *   4.1.3 — selection count + loading announce via aria-live
    *   1.4.11 — borders/dividers ≥3:1 against canvas
    * =============================================================== */
   .table-wrap {
