@@ -1,0 +1,7 @@
+<div id="borrower_select_wrapper">
+  <%= select_tag "loan[borrower_id]",
+    options_from_collection_for_select(borrowers, :id, :name, selected_id),
+    include_blank: t("loans.form.select_borrower"),
+    id: "loan_borrower_id",
+    class: "field__input" %>
+</div>

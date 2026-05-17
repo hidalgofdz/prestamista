@@ -5,9 +5,11 @@
 <% end %>
 
 <%= form_with url: session_path, scope: :session do |f| %>
-  <div>
-    <%= f.label :email %>
-    <%= f.email_field :email, autofocus: true %>
+  <div class="field">
+    <%= f.label :email, class: "field__label" %>
+    <div class="field__control">
+      <%= f.email_field :email, autofocus: true, class: "field__input" %>
+    </div>
   </div>
 
   <div>

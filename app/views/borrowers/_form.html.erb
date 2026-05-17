@@ -9,14 +9,18 @@
     </div>
   <% end %>
 
-  <div>
-    <%= f.label :name %>
-    <%= f.text_field :name %>
+  <div class="field">
+    <%= f.label :name, class: "field__label" %>
+    <div class="field__control">
+      <%= f.text_field :name, class: "field__input" %>
+    </div>
   </div>
 
-  <div>
-    <%= f.label :phone %>
-    <%= f.telephone_field :phone %>
+  <div class="field">
+    <%= f.label :phone, class: "field__label" %>
+    <div class="field__control">
+      <%= f.telephone_field :phone, class: "field__input" %>
+    </div>
   </div>
 
   <div>
