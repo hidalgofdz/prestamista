@@ -22,13 +22,13 @@ class PaymentsTest < ActionDispatch::IntegrationTest
 
   test "partial payment applies interest first then principal" do
     post loan_payments_path(@loan), params: {
-      payment: { amount: "150", date: "2026-06-01" }
+      payment: { amount: "250", date: "2026-06-01" }
     }
 
     follow_redirect!
 
-    assert_select "dd p", /9,950.00/
-    assert_select "#payments .payment-list__split", /Capital.*\$50\.00.*Interés.*\$100\.00/
+    assert_select "dd p", /9,850.00/
+    assert_select "#payments .payment-list__split", /Capital.*\$150\.00.*Interés.*\$100\.00/
   end
 
   test "payment less than interest due applies entirely to interest" do

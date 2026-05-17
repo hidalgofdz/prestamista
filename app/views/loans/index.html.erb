@@ -26,43 +26,13 @@
 
     <ul class="loan-cards">
       <% @active_loans.each do |loan| %>
-        <% next_payment = loan.next_payment_date %>
-        <% overdue = loan.overdue? %>
         <li data-table-filter-target="row" data-filter-group="active">
-          <%= link_to loan_path(loan), class: "loan-card" do %>
-            <div class="loan-card__header">
-              <span class="loan-card__borrower"><%= loan.borrower.name %></span>
-              <span class="loan-card__amount"><%= currency(loan.amount) %></span>
-            </div>
-            <p class="loan-card__subtitle"><%= l(loan.start_date) %> · <%= t(".term_format", months: loan.term_months) %></p>
-            <div class="loan-card__footer">
-              <span class="loan-card__next-payment" data-testid="next-payment">
-                <% if next_payment %>
-                  <%= t(".next_payment_label") %> <%= l(next_payment) %>
-                <% end %>
-              </span>
-              <% if overdue %>
-                <span class="tag tag--danger"><%= t(".status_overdue") %></span>
-              <% else %>
-                <span class="tag tag--success"><%= t(".status_active") %></span>
-              <% end %>
-            </div>
-          <% end %>
+          <%= render "loan_card", loan: loan, next_payment: loan.next_payment_date, overdue: loan.overdue?, paid_off: false %>
         </li>
       <% end %>
       <% @paid_off_loans.each do |loan| %>
         <li data-table-filter-target="row" data-filter-group="paid_off">
-          <%= link_to loan_path(loan), class: "loan-card" do %>
-            <div class="loan-card__header">
-              <span class="loan-card__borrower"><%= loan.borrower.name %></span>
-              <span class="loan-card__amount"><%= currency(loan.amount) %></span>
-            </div>
-            <p class="loan-card__subtitle"><%= l(loan.start_date) %> · <%= t(".term_format", months: loan.term_months) %></p>
-            <div class="loan-card__footer">
-              <span class="loan-card__next-payment">&mdash;</span>
-              <span class="tag tag--brand"><%= t(".status_paid_off") %></span>
-            </div>
-          <% end %>
+          <%= render "loan_card", loan: loan, next_payment: nil, overdue: false, paid_off: true %>
         </li>
       <% end %>
     </ul>

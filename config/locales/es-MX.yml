@@ -45,6 +45,9 @@ es-MX:
       status_active: "Activo"
       status_overdue: "Vencido"
       status_paid_off: "Liquidado"
+      amount_label: "Monto"
+      start_date_label: "Fecha de inicio"
+      term_label: "Plazo"
     show:
       amount: "Monto"
       annual_interest_rate: "Tasa de interés anual"
@@ -59,6 +62,7 @@ es-MX:
       payment_history: "Historial de pagos"
       payment_principal: "Capital"
       payment_interest: "Interés"
+      payment_amount_label: "Monto del pago"
       edit: "Editar"
       back: "Regresar"
     new:

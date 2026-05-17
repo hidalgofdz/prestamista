@@ -56,7 +56,10 @@
         <li class="payment-list__item">
           <div class="payment-list__row">
             <time class="payment-list__date" datetime="<%= payment.date.iso8601 %>"><%= l(payment.date) %></time>
-            <span class="payment-list__amount"><%= currency(payment.amount) %></span>
+            <span class="payment-list__amount">
+              <span class="visually-hidden"><%= t(".payment_amount_label") %></span>
+              <%= currency(payment.amount) %>
+            </span>
           </div>
           <p class="payment-list__split">
             <%= t(".payment_principal") %>: <%= currency(payment.principal_applied) %> · <%= t(".payment_interest") %>: <%= currency(payment.interest_applied) %>

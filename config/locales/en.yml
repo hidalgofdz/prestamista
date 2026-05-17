@@ -45,6 +45,9 @@ en:
       status_active: "Active"
       status_overdue: "Overdue"
       status_paid_off: "Paid off"
+      amount_label: "Amount"
+      start_date_label: "Start date"
+      term_label: "Term"
     show:
       amount: "Amount"
       annual_interest_rate: "Annual interest rate"
@@ -59,6 +62,7 @@ en:
       payment_history: "Payment history"
       payment_principal: "Principal"
       payment_interest: "Interest"
+      payment_amount_label: "Payment amount"
       edit: "Edit"
       back: "Back"
     new:

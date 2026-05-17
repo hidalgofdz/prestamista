@@ -12,7 +12,7 @@
     text-decoration: none;
     color: inherit;
 
-    &:last-child {
+    li:last-child & {
       border-block-end: 0;
     }
 
@@ -25,11 +25,16 @@
     display: flex;
     justify-content: space-between;
     align-items: baseline;
+    gap: var(--inline-space);
   }
 
   .loan-card__borrower {
     font-weight: 600;
     color: var(--color-ink-dark);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-inline-size: 0;
   }
 
   .loan-card__amount {
@@ -37,6 +42,7 @@
     font-variant-numeric: tabular-nums;
     font-weight: 600;
     color: var(--color-ink-dark);
+    flex-shrink: 0;
   }
 
   .loan-card__subtitle {

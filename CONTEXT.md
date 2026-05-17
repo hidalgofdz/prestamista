@@ -16,7 +16,7 @@
 | **Fixed principal payment** | Each month the borrower pays a fixed portion of principal (`amount / term_months`) plus interest on the current balance. Payments decrease slightly over time as the balance shrinks. |
 | **Principal payment (extra)** | An additional payment toward the principal balance, beyond the scheduled amount. Reduces the balance immediately, lowering all future interest charges. |
 | **Loans page** | Flat list of all loans across all borrowers for the lender's account. Each card shows: borrower name (with start date + term as subtitle), amount, next payment date, and status. |
-| **Loan detail** | Summary view showing: borrower, amount, rate, term, monthly principal payment, first month's interest, first total payment, start date, expected end date, and remaining balance. Payment history displayed as a chronological list of cards (date + amount primary, principal/interest split secondary). |
+| **Loan detail** | Summary view showing: borrower, amount, rate, term, monthly principal payment, first month's interest, first total payment, start date, expected end date, and remaining balance. Payment history displayed as a reverse-chronological list of cards (date + amount primary, principal/interest split secondary). |
 | **Paid off** | A loan whose remaining balance has reached zero. Displayed with a visual indicator on both the loan list and detail pages. No separate state record — derived from balance. |
 
 ## Domain Rules
