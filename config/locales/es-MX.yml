@@ -38,6 +38,15 @@ es-MX:
       paid_off: "Liquidado"
       overdue: "Vencido (%{date})"
       empty: "No tienes préstamos registrados."
+      empty_body: "Crea tu primer préstamo para comenzar a rastrear pagos."
+      col_borrower: "Prestatario"
+      col_amount: "Monto"
+      col_start_date: "Fecha inicio"
+      col_next_payment: "Próximo pago"
+      col_status: "Estado"
+      status_active: "Activo"
+      status_overdue: "Vencido"
+      status_paid_off: "Liquidado"
     show:
       amount: "Monto"
       annual_interest_rate: "Tasa de interés anual"
@@ -93,6 +102,11 @@ es-MX:
     index:
       title: "Prestatarios"
       new: "Nuevo prestatario"
+      empty: "Aún no hay prestatarios."
+      empty_body: "Agrega tu primer prestatario para comenzar a registrar préstamos."
+      col_name: "Nombre"
+      col_phone: "Teléfono"
+      col_loans: "Préstamos"
     show:
       edit: "Editar"
       back: "Regresar"

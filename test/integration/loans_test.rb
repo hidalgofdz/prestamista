@@ -11,7 +11,7 @@ class LoansTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "a", /Aaron/
-    assert_select "span", /10,000/
+    assert_select "td", /10,000/
   end
 
   test "lender views a loan with calculated summary" do
@@ -150,7 +150,7 @@ class LoansTest < ActionDispatch::IntegrationTest
     get loans_path
 
     assert_response :success
-    assert_select "h2", /Activos/
+    assert_select ".filter-chip", /Activos/
     assert_select "[data-testid='next-payment']", /01\/06\/2026/
   end
 
@@ -158,8 +158,8 @@ class LoansTest < ActionDispatch::IntegrationTest
     get loans_path
 
     assert_response :success
-    assert_select "h2", /Liquidados/
-    assert_select "h2", /Activos/
+    assert_select ".filter-chip", /Liquidados/
+    assert_select ".filter-chip", /Activos/
   end
 
   test "active loans sorted newest first by start date" do
@@ -196,7 +196,8 @@ class LoansTest < ActionDispatch::IntegrationTest
       get loans_path
 
       assert_response :success
-      assert_select "[data-testid='next-payment'].overdue", /Vencido.*01\/06\/2026/
+      assert_select ".tag--danger", /Vencido/
+      assert_select "[data-testid='next-payment']", /01\/06\/2026/
     end
   end
 end

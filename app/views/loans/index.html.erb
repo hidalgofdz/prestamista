@@ -1,35 +1,93 @@
-<h1><%= t(".title") %></h1>
+<div class="table-wrap">
+  <div class="table-toolbar">
+    <h1 class="table-toolbar__title">
+      <%= t(".title") %>
+      <span class="table-toolbar__count"><%= @active_loans.size + @paid_off_loans.size %></span>
+    </h1>
+    <div class="table-toolbar__actions">
+      <%= link_to t(".new"), new_loan_path, class: "btn btn--primary" %>
+    </div>
+  </div>
 
-<%= link_to t(".new"), new_loan_path, class: "btn btn--primary" %>
+  <% if @active_loans.any? || @paid_off_loans.any? %>
+    <nav class="table-filters" aria-label="<%= t(".title") %>">
+      <span class="table-filters__label"><%= t(".col_status") %></span>
+      <button class="filter-chip" aria-pressed="true" data-filter="all">
+        <%= t(".active_title") %>
+        <span class="filter-chip__count"><%= @active_loans.size %></span>
+      </button>
+      <button class="filter-chip" aria-pressed="false" data-filter="paid_off">
+        <%= t(".paid_off_title") %>
+        <span class="filter-chip__count"><%= @paid_off_loans.size %></span>
+      </button>
+    </nav>
 
-<% if @active_loans.any? %>
-  <h2><%= t(".active_title") %></h2>
-  <% @active_loans.each do |loan| %>
-    <div>
-      <%= link_to loan.borrower.name, loan_path(loan) %>
-      <span><%= number_to_currency(loan.amount, unit: "$", separator: ".", delimiter: ",") %></span>
-      <span><%= l(loan.start_date) %></span>
-      <% if loan.overdue? %>
-        <span data-testid="next-payment" class="overdue"><%= t(".overdue", date: l(loan.next_payment_date)) %></span>
-      <% else %>
-        <span data-testid="next-payment"><%= l(loan.next_payment_date) %></span>
-      <% end %>
+    <div class="table-scroll">
+      <table class="table">
+        <thead class="table__head">
+          <tr class="table__row">
+            <th class="table__cell" scope="col"><%= t(".col_borrower") %></th>
+            <th class="table__cell table__cell--num" scope="col"><%= t(".col_amount") %></th>
+            <th class="table__cell table__cell--show-md" scope="col"><%= t(".col_start_date") %></th>
+            <th class="table__cell table__cell--show-sm" scope="col"><%= t(".col_next_payment") %></th>
+            <th class="table__cell" scope="col"><%= t(".col_status") %></th>
+          </tr>
+        </thead>
+        <tbody class="table__body">
+          <% @active_loans.each do |loan| %>
+            <tr class="table__row">
+              <td class="table__cell">
+                <div class="table__primary">
+                  <span class="table__primary-title"><%= link_to loan.borrower.name, loan_path(loan) %></span>
+                </div>
+              </td>
+              <td class="table__cell table__cell--num"><%= number_to_currency(loan.amount, unit: "$", separator: ".", delimiter: ",") %></td>
+              <td class="table__cell table__cell--show-md"><%= l(loan.start_date) %></td>
+              <td class="table__cell table__cell--show-sm" data-testid="next-payment">
+                <% if loan.overdue? %>
+                  <%= l(loan.next_payment_date) %>
+                <% elsif loan.next_payment_date %>
+                  <%= l(loan.next_payment_date) %>
+                <% end %>
+              </td>
+              <td class="table__cell">
+                <% if loan.overdue? %>
+                  <span class="tag tag--danger"><%= t(".status_overdue") %></span>
+                <% else %>
+                  <span class="tag tag--success"><%= t(".status_active") %></span>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+          <% @paid_off_loans.each do |loan| %>
+            <tr class="table__row">
+              <td class="table__cell">
+                <div class="table__primary">
+                  <span class="table__primary-title"><%= link_to loan.borrower.name, loan_path(loan) %></span>
+                </div>
+              </td>
+              <td class="table__cell table__cell--num"><%= number_to_currency(loan.amount, unit: "$", separator: ".", delimiter: ",") %></td>
+              <td class="table__cell table__cell--show-md"><%= l(loan.start_date) %></td>
+              <td class="table__cell table__cell--show-sm">&mdash;</td>
+              <td class="table__cell">
+                <span class="tag tag--brand"><%= t(".status_paid_off") %></span>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="table-state">
+      <svg class="table-state__icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+        <path d="M9 12h6M12 9v6"/>
+      </svg>
+      <p class="table-state__title"><%= t(".empty") %></p>
+      <p class="table-state__body"><%= t(".empty_body") %></p>
+      <div class="table-state__actions">
+        <%= link_to t(".new"), new_loan_path, class: "btn btn--primary" %>
+      </div>
     </div>
   <% end %>
-<% end %>
-
-<% if @paid_off_loans.any? %>
-  <h2><%= t(".paid_off_title") %></h2>
-  <% @paid_off_loans.each do |loan| %>
-    <div>
-      <%= link_to loan.borrower.name, loan_path(loan) %>
-      <span><%= number_to_currency(loan.amount, unit: "$", separator: ".", delimiter: ",") %></span>
-      <span><%= l(loan.start_date) %></span>
-    </div>
-  <% end %>
-<% end %>
-
-<% if @active_loans.empty? && @paid_off_loans.empty? %>
-  <p><%= t(".empty") %></p>
-  <%= link_to t(".new"), new_loan_path, class: "btn btn--primary" %>
-<% end %>
+</div>
