@@ -31,7 +31,7 @@
             <th class="table__cell" scope="col"><%= t(".col_borrower") %></th>
             <th class="table__cell table__cell--num" scope="col"><%= t(".col_amount") %></th>
             <th class="table__cell table__cell--show-md" scope="col"><%= t(".col_start_date") %></th>
-            <th class="table__cell table__cell--show-sm" scope="col"><%= t(".col_next_payment") %></th>
+            <th class="table__cell" scope="col"><%= t(".col_next_payment") %></th>
             <th class="table__cell" scope="col"><%= t(".col_status") %></th>
           </tr>
         </thead>
@@ -46,7 +46,7 @@
               </td>
               <td class="table__cell table__cell--num"><%= number_to_currency(loan.amount, unit: "$", separator: ".", delimiter: ",") %></td>
               <td class="table__cell table__cell--show-md"><%= l(loan.start_date) %></td>
-              <td class="table__cell table__cell--show-sm" data-testid="next-payment">
+              <td class="table__cell" data-testid="next-payment">
                 <% if loan.next_payment_date %>
                   <%= l(loan.next_payment_date) %>
                 <% end %>
@@ -69,7 +69,7 @@
               </td>
               <td class="table__cell table__cell--num"><%= number_to_currency(loan.amount, unit: "$", separator: ".", delimiter: ",") %></td>
               <td class="table__cell table__cell--show-md"><%= l(loan.start_date) %></td>
-              <td class="table__cell table__cell--show-sm">&mdash;</td>
+              <td class="table__cell">&mdash;</td>
               <td class="table__cell">
                 <span class="tag tag--brand"><%= t(".status_paid_off") %></span>
               </td>

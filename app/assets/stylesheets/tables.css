@@ -280,7 +280,6 @@
     border-spacing: 0;
     font-size: var(--table-font-size);
     color: var(--color-ink);
-    /* Min width keeps columns from collapsing inside narrow viewports. */
   }
 
   .table--compact {
