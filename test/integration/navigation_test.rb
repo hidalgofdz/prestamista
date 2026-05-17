@@ -8,10 +8,10 @@ class NavigationTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "nav.navbar" do
-      assert_select "a.navbar-brand", "Prestamista"
-      assert_select "a.navbar-link", /Préstamos/
-      assert_select "a.navbar-link", /Prestatarios/
-      assert_select "span.navbar-user", "Hidalgo"
+      assert_select "a.navbar__brand", "Prestamista"
+      assert_select "a.navbar__link", /Préstamos/
+      assert_select "a.navbar__link", /Prestatarios/
+      assert_select "span.navbar__user", "Hidalgo"
       assert_select "button", /Cerrar sesión/
     end
   end

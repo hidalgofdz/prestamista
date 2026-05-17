@@ -1,92 +1,108 @@
-/*
- * This is a manifest file that'll be compiled into application.css.
- *
- * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
- * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
- * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
- * depending on specificity.
- *
- * Consider organizing styles into separate files for maintainability.
- */
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
 
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
-  background: #fff;
+  body {
+    margin: 0;
+  }
 }
 
-.navbar-start,
-.navbar-end {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    color: var(--color-ink);
+    background: var(--color-canvas);
+    line-height: 1.5;
+  }
 }
 
-.navbar-brand {
-  font-weight: 700;
-  font-size: 1.1rem;
-  text-decoration: none;
-  color: #111;
-  margin-right: 0.5rem;
+@layer components {
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-block: 0.75rem;
+    padding-inline: 1.5rem;
+    border-block-end: var(--border);
+    background: var(--color-canvas);
+  }
+
+  .navbar__start,
+  .navbar__end {
+    display: flex;
+    align-items: center;
+    gap: var(--inline-space);
+  }
+
+  .navbar__brand {
+    font-weight: 700;
+    font-size: var(--text-medium);
+    text-decoration: none;
+    color: var(--color-ink-dark);
+    margin-inline-end: var(--inline-space-half);
+  }
+
+  .navbar__link {
+    text-decoration: none;
+    color: var(--color-ink-medium);
+    font-size: var(--text-base);
+
+    &:hover,
+    &.active {
+      color: var(--color-ink-dark);
+    }
+  }
+
+  .navbar__user {
+    color: var(--color-ink-medium);
+    font-size: var(--text-base);
+  }
+
+  .navbar__end button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font: inherit;
+  }
 }
 
-.navbar-link {
-  text-decoration: none;
-  color: #6b7280;
-  font-size: 0.9rem;
-}
+@layer modules {
+  .container {
+    max-inline-size: 64rem;
+    margin-inline: auto;
+    padding: 1.5rem;
+  }
 
-.navbar-link:hover,
-.navbar-link.active {
-  color: #111;
-}
+  .inline-form {
+    border: var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--inline-space);
+    margin-block-start: var(--block-space-half);
+    background: var(--color-highlight);
+  }
 
-.navbar-user {
-  color: #6b7280;
-  font-size: 0.9rem;
-}
+  .inline-form__fields {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
 
-.navbar-end button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  font: inherit;
-}
+  .inline-form__fields > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
 
-.container {
-  max-width: 64rem;
-  margin: 0 auto;
-  padding: 1.5rem;
-}
-
-.inline-form {
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  padding: 1rem;
-  margin-top: 0.5rem;
-  background: #f9fafb;
-}
-
-.inline-form-fields {
-  display: flex;
-  gap: 0.75rem;
-  align-items: flex-end;
-  flex-wrap: wrap;
-}
-
-.inline-form-fields > div {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.inline-form-actions {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  margin-top: 0.75rem;
+  .inline-form__actions {
+    display: flex;
+    gap: var(--inline-space-half);
+    align-items: center;
+    margin-block-start: 0.75rem;
+  }
 }

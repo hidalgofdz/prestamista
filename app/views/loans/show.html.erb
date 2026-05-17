@@ -38,7 +38,7 @@
     <%= f.date_field :date, value: Date.current %>
   </div>
   <div>
-    <%= f.submit t(".submit_payment") %>
+    <%= f.submit t(".submit_payment"), class: "btn btn--primary" %>
   </div>
 <% end %>
 
@@ -66,5 +66,5 @@
   </table>
 <% end %>
 
-<%= link_to t(".edit"), edit_loan_path(@loan) %>
-<%= link_to t(".back"), loans_path %>
+<%= link_to t(".edit"), edit_loan_path(@loan), class: "btn btn--secondary" %>
+<%= link_to t(".back"), loans_path, class: "btn btn--ghost" %>
