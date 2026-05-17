@@ -1,0 +1,139 @@
+@layer reset, base, components, modules, utilities, native, platform;
+
+@layer base {
+  :root {
+    /* Typography */
+    --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+    /* Brand · burnt amber (OKLCH) */
+    --color-brand-50:  oklch(0.98 0.02 85);
+    --color-brand-100: oklch(0.95 0.04 85);
+    --color-brand-200: oklch(0.90 0.08 85);
+    --color-brand-300: oklch(0.84 0.13 80);
+    --color-brand-400: oklch(0.79 0.16 75);
+    --color-brand-500: oklch(0.73 0.17 65);
+    --color-brand-600: oklch(0.64 0.16 55);
+    --color-brand-700: oklch(0.55 0.14 50);
+    --color-brand-800: oklch(0.47 0.11 45);
+    --color-brand-900: oklch(0.42 0.09 45);
+    --color-brand-950: oklch(0.30 0.07 40);
+
+    /* Neutral · warm stone (OKLCH) */
+    --color-stone-50:  oklch(0.98 0.005 75);
+    --color-stone-100: oklch(0.96 0.005 75);
+    --color-stone-200: oklch(0.91 0.008 75);
+    --color-stone-300: oklch(0.85 0.01 60);
+    --color-stone-400: oklch(0.71 0.01 60);
+    --color-stone-500: oklch(0.55 0.01 55);
+    --color-stone-600: oklch(0.45 0.01 55);
+    --color-stone-700: oklch(0.38 0.01 50);
+    --color-stone-800: oklch(0.27 0.01 50);
+    --color-stone-900: oklch(0.22 0.01 50);
+    --color-stone-950: oklch(0.15 0.01 50);
+
+    /* Danger (OKLCH) */
+    --color-danger-500: oklch(0.63 0.21 25);
+    --color-danger-600: oklch(0.57 0.22 25);
+    --color-danger-700: oklch(0.50 0.19 25);
+    --color-danger-800: oklch(0.45 0.16 25);
+    --color-danger-900: oklch(0.40 0.13 25);
+
+    /* Semantic surfaces */
+    --color-canvas: var(--color-stone-50);
+    --color-ink: var(--color-stone-900);
+    --color-ink-dark: var(--color-stone-950);
+    --color-ink-medium: var(--color-stone-600);
+    --color-ink-light: var(--color-stone-400);
+    --color-ink-lightest: var(--color-stone-200);
+    --color-ink-inverted: #fff;
+    --color-link: var(--color-brand-700);
+    --color-negative: var(--color-danger-600);
+    --color-positive: oklch(0.55 0.17 145);
+    --color-selected: var(--color-brand-100);
+    --color-highlight: var(--color-brand-50);
+
+    /* Spacing */
+    --inline-space: 1rem;
+    --inline-space-half: 0.5rem;
+    --inline-space-double: 2rem;
+    --block-space: 1rem;
+    --block-space-half: 0.5rem;
+    --block-space-double: 2rem;
+
+    /* Type scale */
+    --text-x-small: 0.75rem;
+    --text-small: 0.8125rem;
+    --text-base: 0.9375rem;
+    --text-medium: 1.0625rem;
+    --text-large: 1.25rem;
+    --text-x-large: 1.5rem;
+    --text-xx-large: 2rem;
+
+    /* Shape */
+    --radius-sm: 0.25rem;
+    --radius-md: 0.375rem;
+    --radius-lg: 0.5rem;
+    --radius-full: 99rem;
+
+    /* Z-index */
+    --z-popup: 100;
+    --z-nav: 200;
+    --z-flash: 300;
+    --z-tooltip: 400;
+    --z-modal: 500;
+
+    /* Focus */
+    --focus-ring-color: var(--color-brand-600);
+    --focus-ring-size: 2px;
+    --focus-ring-offset: 2px;
+
+    /* Shadows */
+    --shadow: 0 1px 3px oklch(0 0 0 / 0.1), 0 1px 2px oklch(0 0 0 / 0.06);
+
+    /* Border */
+    --border: 1px solid var(--color-ink-lightest);
+
+    color-scheme: light;
+  }
+
+  html[data-theme="dark"] {
+    --color-canvas: var(--color-stone-900);
+    --color-ink: var(--color-stone-100);
+    --color-ink-dark: var(--color-stone-50);
+    --color-ink-medium: var(--color-stone-400);
+    --color-ink-light: var(--color-stone-500);
+    --color-ink-lightest: var(--color-stone-700);
+    --color-ink-inverted: var(--color-stone-950);
+    --color-link: var(--color-brand-400);
+    --color-negative: var(--color-danger-500);
+    --color-selected: oklch(0.30 0.06 50);
+    --color-highlight: oklch(0.25 0.04 50);
+    --focus-ring-color: var(--color-brand-400);
+    --shadow: 0 1px 3px oklch(0 0 0 / 0.4), 0 1px 2px oklch(0 0 0 / 0.3);
+    --border: 1px solid var(--color-stone-700);
+
+    color-scheme: dark;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    html:not([data-theme]) {
+      --color-canvas: var(--color-stone-900);
+      --color-ink: var(--color-stone-100);
+      --color-ink-dark: var(--color-stone-50);
+      --color-ink-medium: var(--color-stone-400);
+      --color-ink-light: var(--color-stone-500);
+      --color-ink-lightest: var(--color-stone-700);
+      --color-ink-inverted: var(--color-stone-950);
+      --color-link: var(--color-brand-400);
+      --color-negative: var(--color-danger-500);
+      --color-selected: oklch(0.30 0.06 50);
+      --color-highlight: oklch(0.25 0.04 50);
+      --focus-ring-color: var(--color-brand-400);
+      --shadow: 0 1px 3px oklch(0 0 0 / 0.4), 0 1px 2px oklch(0 0 0 / 0.3);
+      --border: 1px solid var(--color-stone-700);
+
+      color-scheme: dark;
+    }
+  }
+}

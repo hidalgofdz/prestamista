@@ -10,7 +10,7 @@
       </div>
     <% end %>
 
-    <div class="inline-form-fields">
+    <div class="inline-form__fields">
       <div>
         <%= f.label :name %>
         <%= f.text_field :name, autofocus: true %>
@@ -22,9 +22,9 @@
       </div>
     </div>
 
-    <div class="inline-form-actions">
-      <%= f.submit t(".submit") %>
-      <%= link_to t(".cancel"), "#", data: { action: "click->inline-form#close" } %>
+    <div class="inline-form__actions">
+      <%= f.submit t(".submit"), class: "btn btn--primary btn--sm" %>
+      <%= link_to t(".cancel"), "#", class: "btn btn--ghost btn--sm", data: { action: "click->inline-form#close" } %>
     </div>
   <% end %>
 </div>

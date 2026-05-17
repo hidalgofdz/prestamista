@@ -1,6 +1,6 @@
 <h1><%= t(".title") %></h1>
 
-<%= link_to t(".new"), new_loan_path %>
+<%= link_to t(".new"), new_loan_path, class: "btn btn--primary" %>
 
 <% if @active_loans.any? %>
   <h2><%= t(".active_title") %></h2>
@@ -31,5 +31,5 @@
 
 <% if @active_loans.empty? && @paid_off_loans.empty? %>
   <p><%= t(".empty") %></p>
-  <%= link_to t(".new"), new_loan_path %>
+  <%= link_to t(".new"), new_loan_path, class: "btn btn--primary" %>
 <% end %>

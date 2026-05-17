@@ -11,8 +11,8 @@
   </div>
 
   <div>
-    <%= f.submit t(".submit") %>
+    <%= f.submit t(".submit"), class: "btn btn--primary" %>
   </div>
 <% end %>
 
-<p><%= link_to t(".sign_up"), new_registration_path %></p>
+<p><%= link_to t(".sign_up"), new_registration_path, class: "btn btn--link" %></p>
