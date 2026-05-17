@@ -150,7 +150,7 @@ class LoansTest < ActionDispatch::IntegrationTest
     get loans_path
 
     assert_response :success
-    assert_select ".filter-chip", /Activos/
+    assert_select ".filter-chip", /Activo/
     assert_select "[data-testid='next-payment']", /01\/06\/2026/
   end
 
@@ -158,8 +158,8 @@ class LoansTest < ActionDispatch::IntegrationTest
     get loans_path
 
     assert_response :success
-    assert_select ".filter-chip", /Liquidados/
-    assert_select ".filter-chip", /Activos/
+    assert_select ".filter-chip", /Liquidado/
+    assert_select ".filter-chip", /Activo/
   end
 
   test "active loans sorted newest first by start date" do
