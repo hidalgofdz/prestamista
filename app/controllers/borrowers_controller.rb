@@ -4,7 +4,7 @@ class BorrowersController < ApplicationController
   before_action :set_borrower, only: %i[show edit update destroy]
 
   def index
-    @borrowers = @account.borrowers
+    @borrowers = @account.borrowers.includes(:loans)
   end
 
   def show
