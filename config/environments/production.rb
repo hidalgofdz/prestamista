@@ -24,6 +24,10 @@ Rails.application.configure do
   # Store uploaded files on Railway Storage Buckets (S3-compatible) — see config/storage.yml.
   config.active_storage.service = :railway
 
+  # Disable default Active Storage blob routes — all file access goes through
+  # Payments::ProofsController which enforces authentication and account scoping.
+  config.active_storage.draw_routes = false
+
   # Railway (and most PaaS providers) terminate SSL at their proxy layer and forward
   # plain HTTP to the container. assume_ssl makes Rails treat all requests as HTTPS;
   # force_ssl then enforces HTTPS redirects for any external HTTP that slips through.

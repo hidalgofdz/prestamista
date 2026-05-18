@@ -1,0 +1,3 @@
+image_proof_blob: <%= ActiveStorage::FixtureSet.blob filename: "sample.jpg", service_name: "test_fixtures" %>
+
+pdf_proof_blob: <%= ActiveStorage::FixtureSet.blob filename: "sample.pdf", content_type: "application/pdf", service_name: "test_fixtures" %>

@@ -77,12 +77,12 @@
             </span>
             <% if payment.proof.attached? %>
               <% if payment.proof.content_type == "application/pdf" %>
-                <%= link_to rails_blob_path(payment.proof, disposition: :attachment), class: "payment-list__proof", aria: { label: t(".payment_proof_label", amount: currency(payment.amount), date: l(payment.date)) } do %>
+                <%= link_to payment_proof_path(payment), class: "payment-list__proof", aria: { label: t(".payment_proof_label", amount: currency(payment.amount), date: l(payment.date)) } do %>
                   <span class="payment-list__proof-pdf"><%= t(".payment_pdf_label") %></span>
                 <% end %>
               <% else %>
-                <%= link_to rails_blob_path(payment.proof, disposition: :inline), class: "payment-list__proof", aria: { label: t(".payment_proof_label", amount: currency(payment.amount), date: l(payment.date)) } do %>
-                  <%= image_tag payment.proof.variant(resize_to_limit: [64, 64]), class: "payment-list__proof-thumb", alt: "" %>
+                <%= link_to payment_proof_path(payment), class: "payment-list__proof", aria: { label: t(".payment_proof_label", amount: currency(payment.amount), date: l(payment.date)) } do %>
+                  <%= image_tag payment_proof_path(payment, variant: :thumb), class: "payment-list__proof-thumb", alt: "" %>
                 <% end %>
               <% end %>
             <% end %>

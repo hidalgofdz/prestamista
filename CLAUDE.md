@@ -103,6 +103,11 @@ See @../docs/rails-development-principles.md for full development principles.
 
 `prestamista` is a freshly generated **Rails 8.1** application. The lending domain (the project name is Spanish for *moneylender*) has not been implemented yet: `config/routes.rb` is empty, no models exist beyond `ApplicationRecord`, and `db/schema.rb` has not been generated. Treat almost any file under `app/` as greenfield.
 
+## Prerequisites (local development)
+
+- **Docker** — PostgreSQL runs in a container (see below).
+- **libvips** — Required by Active Storage for image variant processing (thumbnails). Install with `brew install vips` (macOS) or `apt-get install libvips` (Linux). The Dockerfile and CI already include it.
+
 ## Database (local development)
 
 PostgreSQL runs in a Docker container, **never natively** on the host. The `db` service is defined in `compose.yml` and pinned to `postgres:17.5-alpine`. Data persists in the `pg_data` named volume.

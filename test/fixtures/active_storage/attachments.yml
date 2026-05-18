@@ -1,0 +1,11 @@
+image_proof_attachment:
+  name: "proof"
+  record_type: "Payment"
+  record_id: "0000000000000000000000021"
+  blob: image_proof_blob
+
+pdf_proof_attachment:
+  name: "proof"
+  record_type: "Payment"
+  record_id: "0000000000000000000000022"
+  blob: pdf_proof_blob

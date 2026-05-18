@@ -10,6 +10,12 @@ no_loans:
   phone: "5559999999"
   account_id: "0000000000000000000000001"
 
+proof_borrower:
+  id: "0000000000000000000000005"
+  name: Proof Borrower
+  phone: "5558888888"
+  account_id: "0000000000000000000000097"
+
 other_borrower:
   id: "0000000000000000000000003"
   name: Someone Else
