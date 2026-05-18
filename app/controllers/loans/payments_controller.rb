@@ -22,7 +22,7 @@ class Loans::PaymentsController < ApplicationController
   end
 
   def update
-    if @payment.save_with_cascade_recalculation(payment_params)
+    if @payment.update_and_recalculate(payment_params)
       redirect_to loan_path(@loan)
     else
       render :edit, status: :unprocessable_entity

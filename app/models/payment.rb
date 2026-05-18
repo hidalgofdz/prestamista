@@ -23,10 +23,10 @@ class Payment < ApplicationRecord
   validate :proof_content_type_acceptable
   validate :proof_size_acceptable
 
-  # Saves this payment with new attrs and recalculates all payments on the loan
-  # in chronological order. Returns false if this payment or a downstream payment
+  # Updates this payment's attrs and recalculates all payment splits on the loan
+  # in chronological order. Returns false if this payment or any downstream payment
   # becomes invalid — the entire operation rolls back via the wrapping transaction.
-  def save_with_cascade_recalculation(attrs)
+  def update_and_recalculate(attrs)
     transaction do
       update!(attrs)
       loan.recalculate_payments
@@ -34,6 +34,9 @@ class Payment < ApplicationRecord
     true
   rescue ActiveRecord::RecordInvalid => e
     errors.add(:base, :downstream_payment_invalid) unless e.record == self
+    false
+  rescue Loan::PaymentExceedsBalance
+    errors.add(:base, :downstream_payment_invalid)
     false
   end
 

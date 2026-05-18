@@ -67,20 +67,23 @@ class Loan < ApplicationRecord
     ordered = payments.reload.order(date: :asc, created_at: :asc).to_a
     return if ordered.empty?
 
-    compute_allocations(ordered)
+    transaction do
+      compute_allocations(ordered)
 
-    # upsert_all bypasses ActiveRecord validations and callbacks, but none of the
-    # Payment validations apply here: amount_does_not_exceed_balance only fires on
-    # amount_changed? or new_record?, and the principal ≤ running_balance invariant
-    # is enforced by compute_allocations. One bulk write for all payments.
-    Payment.upsert_all(
-      ordered.map { |p|
-        { id: p.id, account_id: p.account_id, loan_id: p.loan_id,
-          date: p.date, amount: p.amount,
-          interest_applied: p.interest_applied, principal_applied: p.principal_applied }
-      },
-      update_only: %i[interest_applied principal_applied]
-    )
+      # upsert_all bypasses ActiveRecord validations and callbacks, but none of the
+      # Payment validations apply here: amount_does_not_exceed_balance only fires on
+      # amount_changed? or new_record?, and the principal ≤ running_balance invariant
+      # is enforced by compute_allocations. One bulk write for all payments.
+      Payment.upsert_all(
+        ordered.map { |p|
+          { id: p.id, account_id: p.account_id, loan_id: p.loan_id,
+            date: p.date, amount: p.amount,
+            interest_applied: p.interest_applied, principal_applied: p.principal_applied }
+        },
+        update_only: %i[interest_applied principal_applied]
+      )
+      touch
+    end
   end
 
   private
