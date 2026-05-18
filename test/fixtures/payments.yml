@@ -34,6 +34,15 @@ no_proof_payment:
   interest_applied: 0.00
   date: 2026-02-01
 
+edit_payment:
+  id: "0000000000000000000000025"
+  account_id: "0000000000000000000000096"
+  loan_id: "0000000000000000000000014"
+  amount: 933.33
+  interest_applied: 100.00
+  principal_applied: 833.33
+  date: 2026-06-01
+
 other_account_payment:
   id: "0000000000000000000000023"
   account_id: "0000000000000000000000099"

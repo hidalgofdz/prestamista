@@ -1,0 +1,86 @@
+#+title: Edit A Payment
+
+* Feature: Edit a Payment
+** Background:
+*** Given a lender with an active loan: borrower "aaron", amount $10,000, 12% annual rate, 12 months
+*** Interest accrues monthly from the loan start date. Payments apply to interest first, then principal.
+*** The loan has a recorded payment of $933.33 (the first scheduled payment): $100 interest applied, $833.33 principal applied. Remaining balance: $9,166.67.
+** Scenario: Lender edits a payment amount
+*** When the lender edits the payment amount from $933.33 to $1,200
+*** Then the lender is redirected to the Loan detail page
+*** And the payment shows: $100 interest applied, $1,100 principal applied
+*** And the remaining balance shows $8,900
+** Scenario: Lender edits a payment date
+*** When the lender edits the payment date to a different valid date within the same period
+*** Then the payment is updated successfully
+*** And the interest/principal split is recalculated for the new date
+** Scenario: Lender edits a payment to a lower amount
+*** When the lender edits the payment amount from $933.33 to $500
+*** Then the payment shows: $100 interest applied, $400 principal applied
+*** And the remaining balance shows $9,600
+** Scenario: Editing a payment recalculates subsequent payments
+*** Given the loan has two recorded payments:
+**** Payment 1: $933.33 on month 1 ($100 interest, $833.33 principal). Balance: $9,166.67.
+**** Payment 2: $933.33 on month 2 ($91.67 interest, $841.66 principal). Balance: $8,325.01.
+*** When the lender edits Payment 1 amount from $933.33 to $500
+*** Then Payment 1 shows: $100 interest applied, $400 principal applied
+*** And the remaining balance after Payment 1 is $9,600
+*** And Payment 2 is recalculated: $96.00 interest applied, $837.33 principal applied
+*** And the remaining balance shows $8,762.67
+** Scenario: Date edit reorders payments on the timeline
+*** Given the loan has two recorded payments:
+**** Payment 1: $500 on Jan 15
+**** Payment 2: $933.33 on Feb 15
+*** When the lender edits Payment 1 date from Jan 15 to Mar 15
+*** Then Payment 2 is now chronologically first and recalculated accordingly
+*** And Payment 1 (now chronologically second) is recalculated against the updated balance
+** Scenario: Edit is rejected when downstream payment becomes invalid
+*** Given the loan has two recorded payments:
+**** Payment 1: $933.33 on month 1
+**** Payment 2: $9,000 on month 2
+*** When the lender edits Payment 1 amount from $933.33 to $200
+*** Then the form shows a validation error that the change would make a subsequent payment exceed the remaining balance
+*** And no payments are modified
+** Scenario: Lender replaces proof of payment
+*** Given the payment has an existing proof image attached
+*** When the lender edits the payment and uploads a new proof image
+*** Then the old proof is replaced by the new one
+*** And the payment history shows the new proof thumbnail
+** Scenario: Editing without uploading new proof preserves existing proof
+*** Given the payment has an existing proof image attached
+*** When the lender edits only the payment amount (without uploading new proof)
+*** Then the existing proof remains attached
+** Scenario: Lender deletes proof of payment
+*** Given the payment has an existing proof image attached
+*** When the lender deletes the proof from the payment
+*** Then the proof is removed
+*** And no thumbnail is shown for that payment in the history
+** Scenario: Deleting proof does not affect payment details
+*** Given the payment has proof attached, amount $933.33, and date Jan 15
+*** When the lender deletes the proof
+*** Then the payment still shows amount $933.33 and date Jan 15
+** Scenario: Editing a payment on a paid-off loan can reactivate it
+*** Given the loan is paid off (remaining balance is $0)
+*** When the lender edits the last payment to a lower amount
+*** Then the remaining balance is greater than $0
+*** And the loan no longer shows the "paid off" indicator
+** Scenario: Edit requires a positive amount
+*** When the lender edits a payment and sets the amount to 0
+*** Then the form shows a validation error
+** Scenario: Edit date cannot be in the future
+*** When the lender edits a payment and sets the date to a future date
+*** Then the form shows a validation error
+** Scenario: Edit amount cannot exceed remaining balance
+*** Given the loan has a remaining balance of $5,000 (excluding this payment's principal)
+*** When the lender edits the payment amount to $6,000
+*** Then the form shows a validation error that the amount exceeds the balance
+** Scenario: Proof upload on edit must be a valid file type
+*** When the lender edits a payment and uploads a .txt file as proof
+*** Then the form shows a validation error that only images and PDFs are accepted
+** Scenario: Proof upload on edit must not exceed 10 MB
+*** When the lender edits a payment and uploads a 15 MB image as proof
+*** Then the form shows a validation error that the file is too large
+** Scenario: Cross-account isolation
+*** Given another lender has a different loan with a payment
+*** When the lender tries to edit the other lender's payment
+*** Then the payment is not found

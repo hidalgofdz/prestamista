@@ -16,6 +16,12 @@ proof_lender:
   email: "proof@example.com"
   name: "Proof Lender"
 
+edit_lender:
+  id: "0000000000000000000000104"
+  account_id: "0000000000000000000000096"
+  email: "edit@example.com"
+  name: "Edit Lender"
+
 other_user:
   id: "0000000000000000000000101"
   account_id: "0000000000000000000000099"

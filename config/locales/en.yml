@@ -13,6 +13,8 @@ en:
           attributes:
             amount:
               exceeds_balance: "exceeds the remaining balance"
+            base:
+              downstream_payment_invalid: "this change would make a subsequent payment exceed the remaining balance"
             date:
               in_future: "cannot be in the future"
             proof:
@@ -34,6 +36,13 @@ en:
         date: "Date"
         proof: "Proof of payment"
   loans:
+    payments:
+      edit:
+        title: "Edit payment"
+        proof_label: "Proof of payment (optional)"
+        remove_proof: "Remove"
+        submit: "Save changes"
+        back: "Back"
     index:
       title: "Loans"
       new: "New loan"
@@ -72,6 +81,7 @@ en:
       payment_amount_label: "Payment amount"
       payment_proof_label: "View proof for %{amount} payment on %{date}"
       payment_pdf_label: "PDF"
+      edit_payment: "Edit payment"
       edit: "Edit"
       back: "Back"
     new:

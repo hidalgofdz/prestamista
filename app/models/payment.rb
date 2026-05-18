@@ -1,6 +1,6 @@
 class Payment < ApplicationRecord
   belongs_to :account, default: -> { loan.account }
-  belongs_to :loan
+  belongs_to :loan, touch: true
 
   attribute :date, :date, default: -> { Date.current }
   attribute :principal_applied, :decimal, default: 0
@@ -16,12 +16,26 @@ class Payment < ApplicationRecord
   validates :amount, presence: true, numericality: { greater_than: 0 }
   validates :date, presence: true
 
-  before_validation :apply_to_interest_and_principal
+  before_validation :apply_to_interest_and_principal, on: :create
 
-  validate :amount_does_not_exceed_balance
+  validate :amount_does_not_exceed_balance, if: -> { amount_changed? || new_record? }
   validate :date_not_in_future
   validate :proof_content_type_acceptable
   validate :proof_size_acceptable
+
+  # Saves this payment with new attrs and recalculates all payments on the loan
+  # in chronological order. Returns false if this payment or a downstream payment
+  # becomes invalid — the entire operation rolls back via the wrapping transaction.
+  def save_with_cascade_recalculation(attrs)
+    transaction do
+      update!(attrs)
+      loan.recalculate_payments
+    end
+    true
+  rescue ActiveRecord::RecordInvalid => e
+    errors.add(:base, :downstream_payment_invalid) unless e.record == self
+    false
+  end
 
   private
   def apply_to_interest_and_principal

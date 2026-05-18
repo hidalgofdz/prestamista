@@ -134,4 +134,66 @@ class LoanTest < ActiveSupport::TestCase
       assert_not loan.overdue?
     end
   end
+
+  test "recalculate_payments recalculates downstream payment splits after editing first payment" do
+    loan = loans(:active_loan)
+
+    travel_to Date.new(2026, 7, 1) do
+      payment1 = loan.payments.create!(amount: 933.33, date: Date.new(2026, 6, 1), account: loan.account)
+      payment2 = loan.payments.create!(amount: 933.33, date: Date.new(2026, 7, 1), account: loan.account)
+
+      payment1.update_columns(amount: 500)
+      loan.recalculate_payments
+
+      payment1.reload
+      assert_in_delta 100.00, payment1.interest_applied.to_f, 0.01
+      assert_in_delta 400.00, payment1.principal_applied.to_f, 0.01
+
+      payment2.reload
+      assert_in_delta 96.00, payment2.interest_applied.to_f, 0.01
+      assert_in_delta 837.33, payment2.principal_applied.to_f, 0.01
+    end
+  end
+
+  test "recalculate_payments raises when downstream payment exceeds balance" do
+    loan = loans(:active_loan)
+
+    travel_to Date.new(2026, 7, 1) do
+      loan.payments.create!(amount: 100, date: Date.new(2026, 6, 1), account: loan.account)
+      payment2 = loan.payments.create!(amount: 10_000, date: Date.new(2026, 7, 1), account: loan.account)
+
+      original_interest = payment2.interest_applied
+      original_principal = payment2.principal_applied
+
+      loan.payments.order(:date).first.update_columns(amount: 5000)
+
+      assert_raises ActiveRecord::RecordInvalid do
+        loan.recalculate_payments
+      end
+
+      payment2.reload
+      assert_equal original_interest, payment2.interest_applied
+      assert_equal original_principal, payment2.principal_applied
+    end
+  end
+
+  test "recalculate_payments handles date reorder correctly" do
+    loan = loans(:active_loan)
+
+    travel_to Date.new(2026, 8, 1) do
+      payment1 = loan.payments.create!(amount: 500, date: Date.new(2026, 6, 15), account: loan.account)
+      payment2 = loan.payments.create!(amount: 933.33, date: Date.new(2026, 7, 15), account: loan.account)
+
+      payment1.update_columns(date: Date.new(2026, 8, 1))
+      loan.recalculate_payments
+
+      payment2.reload
+      assert_in_delta 100.00, payment2.interest_applied.to_f, 0.01
+
+      payment1.reload
+      balance_after_p2 = loan.amount - payment2.principal_applied
+      expected_interest = balance_after_p2 * loan.send(:monthly_rate)
+      assert_in_delta expected_interest.to_f, payment1.interest_applied.to_f, 0.01
+    end
+  end
 end

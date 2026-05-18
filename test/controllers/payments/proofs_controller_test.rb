@@ -34,6 +34,49 @@ class Payments::ProofsControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  test "deletes proof from payment" do
+    @no_proof_payment.proof.attach(
+      io: File.open(file_fixture("sample.jpg")),
+      filename: "sample.jpg",
+      content_type: "image/jpeg"
+    )
+    assert @no_proof_payment.proof.attached?
+
+    delete payment_proof_path(@no_proof_payment)
+
+    assert_redirected_to loan_path(@no_proof_payment.loan)
+    @no_proof_payment.reload
+    assert_not @no_proof_payment.proof.attached?
+  end
+
+  test "deleting proof does not change payment amount or date" do
+    @no_proof_payment.proof.attach(
+      io: File.open(file_fixture("sample.jpg")),
+      filename: "sample.jpg",
+      content_type: "image/jpeg"
+    )
+    original_amount = @no_proof_payment.amount
+    original_date = @no_proof_payment.date
+
+    delete payment_proof_path(@no_proof_payment)
+
+    @no_proof_payment.reload
+    assert_equal original_amount, @no_proof_payment.amount
+    assert_equal original_date, @no_proof_payment.date
+  end
+
+  test "deleting proof returns 404 for other account" do
+    delete payment_proof_path(@other_account_payment)
+    assert_response :not_found
+  end
+
+  test "edit page shows current proof thumbnail and remove link" do
+    get edit_loan_payment_path(loans(:proof_loan), @image_payment)
+    assert_response :success
+    assert_select ".payment-edit__current-proof"
+    assert_select "a[data-turbo-method='delete'][href='#{payment_proof_path(@image_payment)}']"
+  end
+
   test "redirects unauthenticated requests to sign in" do
     reset!
     get payment_proof_path(@image_payment)

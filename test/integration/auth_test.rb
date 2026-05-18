@@ -78,4 +78,10 @@ class AuthTest < ActionDispatch::IntegrationTest
     get loans_path
     assert_redirected_to new_session_path
   end
+
+  test "sign_in authenticates as the given user" do
+    sign_in users(:other_user)
+    get loan_path(loans(:other_account_loan))
+    assert_response :success
+  end
 end

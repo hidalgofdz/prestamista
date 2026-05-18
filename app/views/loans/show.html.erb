@@ -67,31 +67,7 @@
       <h2 class="table-toolbar__title"><%= t(".payment_history") %></h2>
     </div>
     <ul id="payments" class="payment-list">
-      <% @payments.each do |payment| %>
-        <li class="payment-list__item">
-          <div class="payment-list__row">
-            <time class="payment-list__date" datetime="<%= payment.date.iso8601 %>"><%= l(payment.date) %></time>
-            <span class="payment-list__amount">
-              <span class="visually-hidden"><%= t(".payment_amount_label") %></span>
-              <%= currency(payment.amount) %>
-            </span>
-            <% if payment.proof.attached? %>
-              <% if payment.proof.content_type == "application/pdf" %>
-                <%= link_to payment_proof_path(payment), class: "payment-list__proof", aria: { label: t(".payment_proof_label", amount: currency(payment.amount), date: l(payment.date)) } do %>
-                  <span class="payment-list__proof-pdf"><%= t(".payment_pdf_label") %></span>
-                <% end %>
-              <% else %>
-                <%= link_to payment_proof_path(payment), class: "payment-list__proof", aria: { label: t(".payment_proof_label", amount: currency(payment.amount), date: l(payment.date)) } do %>
-                  <%= image_tag payment_proof_path(payment, variant: :thumb), class: "payment-list__proof-thumb", alt: "" %>
-                <% end %>
-              <% end %>
-            <% end %>
-          </div>
-          <p class="payment-list__split">
-            <%= t(".payment_principal") %>: <%= currency(payment.principal_applied) %> · <%= t(".payment_interest") %>: <%= currency(payment.interest_applied) %>
-          </p>
-        </li>
-      <% end %>
+      <%= render @payments %>
     </ul>
   </div>
 <% end %>

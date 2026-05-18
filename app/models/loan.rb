@@ -61,6 +61,28 @@ class Loan < ApplicationRecord
     remaining_balance <= 0
   end
 
+  def recalculate_payments
+    ordered = payments.reload.order(date: :asc, created_at: :asc).to_a
+    running_balance = amount
+
+    transaction do
+      ordered.each do |payment|
+        interest_due = interest_for_running_balance(payment, running_balance, ordered)
+        payment.interest_applied = [ payment.amount, interest_due ].min
+        payment.principal_applied = payment.amount - payment.interest_applied
+
+        if payment.principal_applied > running_balance
+          raise ActiveRecord::RecordInvalid.new(payment)
+        end
+
+        # update_columns bypasses validations intentionally — running amount_does_not_exceed_balance
+        # against a mid-recalculation balance would produce spurious errors before the balance settles.
+        payment.update_columns(interest_applied: payment.interest_applied, principal_applied: payment.principal_applied)
+        running_balance -= payment.principal_applied
+      end
+    end
+  end
+
   private
   def period_covered?(period_payments)
     if period_payments.empty?
@@ -94,6 +116,22 @@ class Loan < ApplicationRecord
     months_elapsed = ((date.year - start_date.year) * 12) + (date.month - start_date.month)
     months_elapsed = [ months_elapsed, 0 ].max
     start_date >> months_elapsed
+  end
+
+  def interest_for_running_balance(payment, running_balance, ordered)
+    period_start = period_start_for(payment.date)
+    period_end = period_end_for(period_start)
+    period_interest = running_balance * monthly_rate
+
+    already_paid = ordered
+      .select { |p| p != payment && p.date >= period_start && p.date <= period_end && chronologically_before?(p, payment, ordered) }
+      .sum(&:interest_applied)
+
+    [ period_interest - already_paid, 0 ].max
+  end
+
+  def chronologically_before?(a, b, ordered)
+    ordered.index(a) < ordered.index(b)
   end
 
   def period_end_for(period_start)

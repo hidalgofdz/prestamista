@@ -16,6 +16,12 @@ proof_borrower:
   phone: "5558888888"
   account_id: "0000000000000000000000097"
 
+edit_borrower:
+  id: "0000000000000000000000006"
+  name: Edit Borrower
+  phone: "5557777777"
+  account_id: "0000000000000000000000096"
+
 other_borrower:
   id: "0000000000000000000000003"
   name: Someone Else
