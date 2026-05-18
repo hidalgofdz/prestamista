@@ -167,7 +167,7 @@ class LoanTest < ActiveSupport::TestCase
 
       loan.payments.order(:date).first.update_columns(amount: 5000)
 
-      assert_raises ActiveRecord::RecordInvalid do
+      assert_raises Loan::PaymentExceedsBalance do
         loan.recalculate_payments
       end
 
