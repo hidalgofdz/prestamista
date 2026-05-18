@@ -90,7 +90,7 @@ class PaymentsTest < ActionDispatch::IntegrationTest
       }
     end
 
-    assert_response :redirect
+    assert_response :unprocessable_entity
   end
 
   test "payment date cannot be in the future" do
@@ -100,7 +100,7 @@ class PaymentsTest < ActionDispatch::IntegrationTest
       }
     end
 
-    assert_response :redirect
+    assert_response :unprocessable_entity
   end
 
   test "payment cannot exceed remaining balance" do
@@ -110,7 +110,7 @@ class PaymentsTest < ActionDispatch::IntegrationTest
       }
     end
 
-    assert_response :redirect
+    assert_response :unprocessable_entity
   end
 
   test "lender cannot record payment on another account's loan" do

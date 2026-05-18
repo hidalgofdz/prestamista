@@ -52,6 +52,20 @@
 *** Given the loan has a remaining balance of $5,000
 *** When the lender tries to record a payment of $6,000
 *** Then the form shows a validation error that the amount exceeds the balance
+** Scenario: Lender records a payment with proof of payment
+*** When the lender records a payment of $933.33 for the loan and uploads an image as proof
+*** Then the lender is redirected to the Loan detail page
+*** And the payment appears in the payment history with a thumbnail of the uploaded proof
+** Scenario: Proof of payment is optional
+*** When the lender records a payment of $500 without uploading proof
+*** Then the payment is recorded successfully
+*** And no thumbnail is shown for that payment in the history
+** Scenario: Proof of payment must be a valid file type
+*** When the lender tries to upload a .txt file as proof
+*** Then the form shows a validation error that only images and PDFs are accepted
+** Scenario: Proof of payment must not exceed 10 MB
+*** When the lender tries to upload a 15 MB image as proof
+*** Then the form shows a validation error that the file is too large
 ** Scenario: Cross-account isolation
 *** Given another lender has a different loan
 *** When the lender tries to record a payment on the other lender's loan

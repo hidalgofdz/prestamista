@@ -23,6 +23,10 @@ module Prestamista
     #
     # config.eager_load_paths << Rails.root.join("extras")
 
+    config.generators do |g|
+      g.orm :active_record, primary_key_type: :string
+    end
+
     config.i18n.default_locale = :"es-MX"
     config.i18n.available_locales = [ :"es-MX", :en ]
     config.i18n.fallbacks = { "es-MX" => [ :es, :en ] }

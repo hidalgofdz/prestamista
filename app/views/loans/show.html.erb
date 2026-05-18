@@ -28,7 +28,7 @@
 <% end %>
 
 <h2><%= t(".record_payment") %></h2>
-<%= form_with model: Payment.new, url: loan_payments_path(@loan) do |f| %>
+<%= form_with model: @payment, url: loan_payments_path(@loan), multipart: true do |f| %>
   <div class="field">
     <%= f.label :amount, class: "field__label" %>
     <div class="field__control">
@@ -39,6 +39,12 @@
     <%= f.label :date, class: "field__label" %>
     <div class="field__control">
       <%= f.date_field :date, value: Date.current, class: "field__input" %>
+    </div>
+  </div>
+  <div class="field">
+    <%= f.label :proof, t(".proof_label"), class: "field__label" %>
+    <div class="field__control">
+      <%= f.file_field :proof, accept: "image/jpeg,image/png,image/webp,image/heic,application/pdf", class: "field__input" %>
     </div>
   </div>
   <div>
@@ -60,6 +66,17 @@
               <span class="visually-hidden"><%= t(".payment_amount_label") %></span>
               <%= currency(payment.amount) %>
             </span>
+            <% if payment.proof.attached? %>
+              <% if payment.proof.content_type == "application/pdf" %>
+                <%= link_to rails_blob_path(payment.proof, disposition: :attachment), class: "payment-list__proof", aria: { label: t(".payment_proof_label") } do %>
+                  <span class="payment-list__proof-pdf"><%= t(".payment_pdf_label") %></span>
+                <% end %>
+              <% else %>
+                <%= link_to rails_blob_path(payment.proof, disposition: :inline), class: "payment-list__proof", aria: { label: t(".payment_proof_label") } do %>
+                  <%= image_tag payment.proof.variant(resize_to_limit: [64, 64]), class: "payment-list__proof-thumb", alt: "" %>
+                <% end %>
+              <% end %>
+            <% end %>
           </div>
           <p class="payment-list__split">
             <%= t(".payment_principal") %>: <%= currency(payment.principal_applied) %> · <%= t(".payment_interest") %>: <%= currency(payment.interest_applied) %>

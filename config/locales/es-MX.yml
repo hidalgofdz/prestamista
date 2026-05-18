@@ -15,6 +15,9 @@ es-MX:
               exceeds_balance: "excede el saldo restante"
             date:
               in_future: "no puede ser en el futuro"
+            proof:
+              invalid_content_type: "debe ser JPEG, PNG, WebP, HEIC o PDF"
+              too_large: "debe ser menor a 10 MB"
     models:
       borrower:
         one: "Prestatario"
@@ -29,6 +32,7 @@ es-MX:
       payment:
         amount: "Monto"
         date: "Fecha"
+        proof: "Comprobante de pago"
   loans:
     index:
       title: "Préstamos"
@@ -60,11 +64,14 @@ es-MX:
       remaining_balance: "Saldo restante"
       paid_off: "Liquidado"
       record_payment: "Registrar pago"
+      proof_label: "Comprobante de pago (opcional)"
       submit_payment: "Registrar"
       payment_history: "Historial de pagos"
       payment_principal: "Capital"
       payment_interest: "Interés"
       payment_amount_label: "Monto del pago"
+      payment_proof_label: "Ver comprobante"
+      payment_pdf_label: "PDF"
       edit: "Editar"
       back: "Regresar"
     new:

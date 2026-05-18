@@ -9,7 +9,8 @@ class Loans::PaymentsController < ApplicationController
     if @payment.save
       redirect_to loan_path(@loan)
     else
-      redirect_to loan_path(@loan), alert: @payment.errors.full_messages.join(", ")
+      @payments = @loan.payments.order(date: :desc, created_at: :desc)
+      render "loans/show", status: :unprocessable_entity
     end
   end
 
@@ -19,6 +20,6 @@ class Loans::PaymentsController < ApplicationController
   end
 
   def payment_params
-    params.require(:payment).permit(:amount, :date)
+    params.require(:payment).permit(:amount, :date, :proof)
   end
 end
