@@ -70,7 +70,7 @@ en:
       payment_principal: "Principal"
       payment_interest: "Interest"
       payment_amount_label: "Payment amount"
-      payment_proof_label: "View proof"
+      payment_proof_label: "View proof for %{amount} payment on %{date}"
       payment_pdf_label: "PDF"
       edit: "Edit"
       back: "Back"

@@ -5,5 +5,5 @@ module ActiveStorageUUIDv7
 end
 
 Rails.application.config.to_prepare do
-  ActiveStorage::Record.include(ActiveStorageUUIDv7)
+  ActiveStorage::Record.include(ActiveStorageUUIDv7) unless ActiveStorage::Record < ActiveStorageUUIDv7
 end

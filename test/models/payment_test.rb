@@ -13,11 +13,9 @@ class PaymentTest < ActiveSupport::TestCase
 
   test "payment is valid with a JPEG image proof" do
     payment = @loan.payments.build(amount: 500, date: Date.current)
-    payment.proof.attach(
-      io: File.open(Rails.root.join("test/fixtures/files/sample.jpg")),
-      filename: "sample.jpg",
-      content_type: "image/jpeg"
-    )
+    File.open(Rails.root.join("test/fixtures/files/sample.jpg")) do |io|
+      payment.proof.attach(io: io, filename: "sample.jpg", content_type: "image/jpeg")
+    end
     assert payment.valid?, payment.errors.full_messages.to_sentence
   end
 

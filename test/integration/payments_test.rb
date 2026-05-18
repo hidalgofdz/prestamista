@@ -111,6 +111,7 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :unprocessable_entity
+    assert_select "dd p", /10,000.00/
   end
 
   test "lender records a payment with proof attachment" do

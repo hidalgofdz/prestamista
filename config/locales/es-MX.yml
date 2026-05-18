@@ -70,7 +70,7 @@ es-MX:
       payment_principal: "Capital"
       payment_interest: "Interés"
       payment_amount_label: "Monto del pago"
-      payment_proof_label: "Ver comprobante"
+      payment_proof_label: "Ver comprobante del pago de %{amount} del %{date}"
       payment_pdf_label: "PDF"
       edit: "Editar"
       back: "Regresar"
