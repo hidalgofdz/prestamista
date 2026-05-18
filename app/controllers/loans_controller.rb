@@ -10,7 +10,8 @@ class LoansController < ApplicationController
   end
 
   def show
-    @payments = @loan.payments.order(date: :desc, created_at: :desc)
+    @payment = @loan.payments.new
+    @payments = @loan.payments.with_attached_proof.order(date: :desc, created_at: :desc)
   end
 
   def new

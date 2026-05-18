@@ -18,9 +18,14 @@
 | **Loans page** | Flat list of all loans across all borrowers for the lender's account. Each card shows: borrower name (with start date + term as subtitle), amount, next payment date, and status. |
 | **Loan detail** | Summary view showing: borrower, amount, rate, term, monthly principal payment, first month's interest, first total payment, start date, expected end date, and remaining balance. Payment history displayed as a reverse-chronological list of cards (date + amount primary, principal/interest split secondary). |
 | **Paid off** | A loan whose remaining balance has reached zero. Displayed with a visual indicator on both the loan list and detail pages. No separate state record — derived from balance. |
+| **Payment proof** | An optional image (JPEG, PNG, WebP, HEIC) or PDF attached to a payment as evidence of the transaction — typically a transfer screenshot or bank receipt. Single file per payment, max 10 MB. Displayed as a thumbnail in the payment history list. |
 
 ## Domain Rules
 
 - A **loan cannot be deleted** if it has recorded payments. The payment history is the financial record.
 - A **borrower cannot be deleted** if they have loans. Remove loans first (only possible if they have no payments).
 - A **payment date** must not be in the future. Backdating is allowed (to record payments received earlier).
+
+## Technical Notes
+
+- **Active Storage content-type detection uses Marcel** which inspects magic bytes first, but may fall back to filename extension or declared content type when magic bytes are inconclusive. Validating `proof.content_type` is a reasonable defense layer for the allowed file types (JPEG, PNG, WebP, HEIC, PDF — all have strong magic byte signatures), but should not be treated as a guarantee against all spoofing scenarios.

@@ -15,6 +15,9 @@ en:
               exceeds_balance: "exceeds the remaining balance"
             date:
               in_future: "cannot be in the future"
+            proof:
+              invalid_content_type: "must be a JPEG, PNG, WebP, HEIC, or PDF"
+              too_large: "must be 10 MB or less"
     models:
       borrower:
         one: "Borrower"
@@ -29,6 +32,7 @@ en:
       payment:
         amount: "Amount"
         date: "Date"
+        proof: "Proof of payment"
   loans:
     index:
       title: "Loans"
@@ -60,11 +64,14 @@ en:
       remaining_balance: "Remaining balance"
       paid_off: "Paid off"
       record_payment: "Record payment"
+      proof_label: "Proof of payment (optional)"
       submit_payment: "Record"
       payment_history: "Payment history"
       payment_principal: "Principal"
       payment_interest: "Interest"
       payment_amount_label: "Payment amount"
+      payment_proof_label: "View proof for %{amount} payment on %{date}"
+      payment_pdf_label: "PDF"
       edit: "Edit"
       back: "Back"
     new:

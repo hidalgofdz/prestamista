@@ -2,22 +2,28 @@ class Payment < ApplicationRecord
   belongs_to :account, default: -> { loan.account }
   belongs_to :loan
 
+  attribute :date, :date, default: -> { Date.current }
+  attribute :principal_applied, :decimal, default: 0
+  attribute :interest_applied, :decimal, default: 0
+
+  has_one_attached :proof
+
+  PROOF_CONTENT_TYPES = %w[image/jpeg image/png image/webp image/heic application/pdf].freeze
+  PROOF_MAX_SIZE = 10.megabytes
+
   validates :amount, presence: true, numericality: { greater_than: 0 }
   validates :date, presence: true
 
-  before_validation :set_date
   before_validation :apply_to_interest_and_principal
 
   validate :amount_does_not_exceed_balance
   validate :date_not_in_future
+  validate :proof_content_type_acceptable
+  validate :proof_size_acceptable
 
   private
-  def set_date
-    self.date ||= Date.current
-  end
-
   def apply_to_interest_and_principal
-    return unless loan && amount.present? && amount > 0
+    return unless loan && amount.present? && amount > 0 && date.present?
 
     interest_due = loan.interest_due_on(date, excluding: self)
     self.interest_applied = [ amount, interest_due ].min
@@ -37,6 +43,22 @@ class Payment < ApplicationRecord
 
     if date > Date.current
       errors.add(:date, :in_future)
+    end
+  end
+
+  def proof_content_type_acceptable
+    return unless proof.attached?
+
+    unless PROOF_CONTENT_TYPES.include?(proof.content_type)
+      errors.add(:proof, :invalid_content_type)
+    end
+  end
+
+  def proof_size_acceptable
+    return unless proof.attached?
+
+    if proof.byte_size > PROOF_MAX_SIZE
+      errors.add(:proof, :too_large)
     end
   end
 end

@@ -21,8 +21,8 @@ Rails.application.configure do
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
 
-  # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :local
+  # Store uploaded files on Railway Storage Buckets (S3-compatible) — see config/storage.yml.
+  config.active_storage.service = :railway
 
   # Railway (and most PaaS providers) terminate SSL at their proxy layer and forward
   # plain HTTP to the container. assume_ssl makes Rails treat all requests as HTTPS;

@@ -90,7 +90,7 @@ class PaymentsTest < ActionDispatch::IntegrationTest
       }
     end
 
-    assert_response :redirect
+    assert_response :unprocessable_entity
   end
 
   test "payment date cannot be in the future" do
@@ -100,7 +100,18 @@ class PaymentsTest < ActionDispatch::IntegrationTest
       }
     end
 
-    assert_response :redirect
+    assert_response :unprocessable_entity
+  end
+
+  test "payment with blank date returns validation error" do
+    assert_no_difference "Payment.count" do
+      post loan_payments_path(@loan), params: {
+        payment: { amount: "933.33", date: "" }
+      }
+    end
+
+    assert_response :unprocessable_entity
+    assert_select "#errors li", /Fecha/
   end
 
   test "payment cannot exceed remaining balance" do
@@ -110,7 +121,25 @@ class PaymentsTest < ActionDispatch::IntegrationTest
       }
     end
 
+    assert_response :unprocessable_entity
+    assert_select "dd p", /10,000.00/
+  end
+
+  test "lender records a payment with proof attachment" do
+    proof = fixture_file_upload("sample.jpg", "image/jpeg")
+
+    post loan_payments_path(@loan), params: {
+      payment: { amount: "933.33", date: "2026-06-01", proof: proof }
+    }
+
     assert_response :redirect
+    follow_redirect!
+
+    assert_response :success
+    payment = @loan.payments.last
+    assert payment.proof.attached?
+    assert_equal "image/jpeg", payment.proof.content_type
+    assert_select ".payment-list__proof-thumb"
   end
 
   test "lender cannot record payment on another account's loan" do
