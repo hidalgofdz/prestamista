@@ -8,9 +8,9 @@ local:
 
 railway:
   service: S3
-  access_key_id: <%= ENV["ACCESS_KEY_ID"] %>
-  secret_access_key: <%= ENV["SECRET_ACCESS_KEY"] %>
-  endpoint: <%= ENV["ENDPOINT"] %>
-  bucket: <%= ENV["BUCKET"] %>
-  region: <%= ENV["REGION"] %>
+  access_key_id: <%= ENV["RAILWAY_AWS_ACCESS_KEY_ID"] %>
+  secret_access_key: <%= ENV["RAILWAY_AWS_SECRET_ACCESS_KEY"] %>
+  endpoint: <%= ENV["RAILWAY_AWS_ENDPOINT_URL"] %>
+  bucket: <%= ENV["RAILWAY_AWS_S3_BUCKET_NAME"] %>
+  region: <%= ENV["RAILWAY_AWS_DEFAULT_REGION"] %>
   force_path_style: true
