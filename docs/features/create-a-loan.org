@@ -3,6 +3,9 @@
 * Feature: Create a Loan
 ** Background:
 *** Given a lender named "hidalgo" and a borrower named "aaron"
+** Scenario: Start date is prefilled with today's date
+*** When the lender navigates to the new loan page
+*** Then the start date field is prefilled with today's date
 ** Scenario: Lender creates a loan
 *** When the lender creates a loan with the following details:
 **** Borrower: "aaron"

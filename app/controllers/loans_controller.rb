@@ -15,7 +15,7 @@ class LoansController < ApplicationController
   end
 
   def new
-    @loan = @account.loans.new
+    @loan = @account.loans.new(start_date: Date.current)
   end
 
   def create
