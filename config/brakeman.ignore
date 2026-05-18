@@ -1,0 +1,18 @@
+{
+  "ignored_warnings": [
+    {
+      "fingerprint": "ac75bc2e86ec782b8020e55bb3243b9c29a1c6887a7197ab94834e05e689becf",
+      "note": "Redirect target is a presigned S3 URL from ActiveStorage::Blob#url, not user input (ADR 0003)"
+    },
+    {
+      "fingerprint": "7f5114b601eef6eaa33cd2852273d8d3dc0cd17905818ed5eae19d4abad0791d",
+      "note": "Redirect target is a presigned S3 URL from ActiveStorage::Blob#url, not user input (ADR 0003)"
+    },
+    {
+      "fingerprint": "f58f6b653603252cb28d8edc854f09dacd1fbcd7904019f893c6f2d175ce4b0a",
+      "note": "Redirect target is a presigned S3 URL from ActiveStorage::Blob#url, not user input (ADR 0003)"
+    }
+  ],
+  "updated": "2026-05-17",
+  "brakeman_version": "7.1.0"
+}
