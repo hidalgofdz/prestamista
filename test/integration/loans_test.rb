@@ -200,4 +200,61 @@ class LoansTest < ActionDispatch::IntegrationTest
       assert_select "[data-testid='next-payment']", /01\/06\/2026/
     end
   end
+
+  test "new loan form prefills start date with today" do
+    travel_to Date.new(2026, 5, 18) do
+      get new_loan_path
+
+      assert_response :success
+      assert_select "input[name='loan[start_date]'][value='2026-05-18']"
+    end
+  end
+
+  test "lender creates a loan and detail page shows all six fields" do
+    travel_to Date.new(2026, 5, 18) do
+      post loans_path, params: {
+        loan: {
+          borrower_id: @borrower.id,
+          amount: "10000",
+          annual_interest_rate: "12",
+          term_months: "12",
+          start_date: "2026-05-18"
+        }
+      }
+
+      assert_response :redirect
+      follow_redirect!
+
+      assert_response :success
+      assert_select "h1", /Aaron/
+      assert_select "dd p", /10,000/
+      assert_select "dd p", /12\.00/
+      assert_select "dd p", "12"
+      assert_select "dd p", /888/
+      assert_select "dd p", /18\/05\/2026/
+    end
+  end
+
+  test "lender creates a loan and index shows new loan alongside existing loans" do
+    existing_loan = loans(:active_loan)
+
+    post loans_path, params: {
+      loan: {
+        borrower_id: @borrower.id,
+        amount: "3000",
+        annual_interest_rate: "10",
+        term_months: "6",
+        start_date: "2026-05-18"
+      }
+    }
+
+    assert_response :redirect
+
+    get loans_path
+
+    assert_response :success
+    assert_select ".loan-card__amount", /3,000/
+    assert_select ".loan-card__amount", /10,000/
+    assert_select ".loan-card__borrower", text: /Aaron/, minimum: 2
+  end
 end
