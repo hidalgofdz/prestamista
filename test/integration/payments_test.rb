@@ -103,6 +103,17 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   end
 
+  test "payment with blank date returns validation error" do
+    assert_no_difference "Payment.count" do
+      post loan_payments_path(@loan), params: {
+        payment: { amount: "933.33", date: "" }
+      }
+    end
+
+    assert_response :unprocessable_entity
+    assert_select "#errors li", /Fecha/
+  end
+
   test "payment cannot exceed remaining balance" do
     assert_no_difference "Payment.count" do
       post loan_payments_path(@loan), params: {

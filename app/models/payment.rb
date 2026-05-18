@@ -23,7 +23,7 @@ class Payment < ApplicationRecord
 
   private
   def apply_to_interest_and_principal
-    return unless loan && amount.present? && amount > 0
+    return unless loan && amount.present? && amount > 0 && date.present?
 
     interest_due = loan.interest_due_on(date, excluding: self)
     self.interest_applied = [ amount, interest_due ].min
