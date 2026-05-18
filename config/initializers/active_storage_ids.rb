@@ -1,9 +1,9 @@
-Rails.application.config.to_prepare do
-  ActiveStorage::Record.include(Module.new {
-    extend ActiveSupport::Concern
+module ActiveStorageUUIDv7
+  def self.included(base)
+    base.before_create { self.id ||= ApplicationRecord.generate_id }
+  end
+end
 
-    included do
-      before_create { self.id ||= ApplicationRecord.generate_id }
-    end
-  })
+Rails.application.config.to_prepare do
+  ActiveStorage::Record.include(ActiveStorageUUIDv7)
 end
