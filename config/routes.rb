@@ -18,6 +18,10 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :payments, only: [] do
+    resource :proof, only: :show, module: :payments
+  end
+
   scope module: :loans, path: "loans", as: :loans do
     resources :borrowers, only: %i[new create]
   end

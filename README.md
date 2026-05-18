@@ -4,9 +4,14 @@ A Rails 8.1 application. Stack and conventions are documented in [CLAUDE.md](CLA
 
 ## Local development
 
-PostgreSQL runs in a Docker container — you do not need a native install.
+### Prerequisites
 
-1. Install Docker Desktop (or another Docker engine).
+- **Docker** — PostgreSQL runs in a container; you do not need a native install.
+- **libvips** — Required for image processing (payment proof thumbnails). Install with `brew install vips` (macOS) or `apt-get install libvips` (Linux).
+
+### Setup
+
+1. Install the prerequisites above.
 2. From the project root:
    ```sh
    cp .env.example .env       # adjust if you want different credentials

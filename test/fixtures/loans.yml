@@ -16,6 +16,15 @@ paid_off_loan:
   term_months: 1
   start_date: 2026-01-15
 
+proof_loan:
+  id: "0000000000000000000000013"
+  account_id: "0000000000000000000000097"
+  borrower_id: "0000000000000000000000005"
+  amount: 5000.00
+  annual_interest_rate: 10.00
+  term_months: 6
+  start_date: 2026-01-01
+
 other_account_loan:
   id: "0000000000000000000000011"
   account_id: "0000000000000000000000099"

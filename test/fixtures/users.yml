@@ -10,6 +10,12 @@ empty_lender:
   email: "empty@example.com"
   name: "Empty"
 
+proof_lender:
+  id: "0000000000000000000000103"
+  account_id: "0000000000000000000000097"
+  email: "proof@example.com"
+  name: "Proof Lender"
+
 other_user:
   id: "0000000000000000000000101"
   account_id: "0000000000000000000000099"

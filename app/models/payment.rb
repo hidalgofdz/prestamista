@@ -6,7 +6,9 @@ class Payment < ApplicationRecord
   attribute :principal_applied, :decimal, default: 0
   attribute :interest_applied, :decimal, default: 0
 
-  has_one_attached :proof
+  has_one_attached :proof do |attachable|
+    attachable.variant :thumb, resize_to_limit: [ 64, 64 ], preprocessed: true
+  end
 
   PROOF_CONTENT_TYPES = %w[image/jpeg image/png image/webp image/heic application/pdf].freeze
   PROOF_MAX_SIZE = 10.megabytes
@@ -49,7 +51,7 @@ class Payment < ApplicationRecord
   def proof_content_type_acceptable
     return unless proof.attached?
 
-    unless PROOF_CONTENT_TYPES.include?(proof.content_type)
+    if PROOF_CONTENT_TYPES.exclude?(proof.content_type)
       errors.add(:proof, :invalid_content_type)
     end
   end
