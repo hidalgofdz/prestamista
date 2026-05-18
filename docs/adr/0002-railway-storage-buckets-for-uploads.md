@@ -23,6 +23,6 @@ Local disk (`:local` service) for development and test environments.
 ## Consequences
 
 - No separate cloud provider account needed — storage is managed alongside the app in Railway.
-- Buckets are private-only; public URLs are not available. Presigned URLs (time-limited) are the access mechanism.
+- Buckets are private-only; public URLs are not available. Active Storage's default blob routes use a permanent signed ID to redirect to a short-lived presigned S3 URL. The blob route itself is not time-limited or access-controlled — an authenticated proxy controller is needed to enforce app-level authorization on private files.
 - If Railway Buckets ever becomes insufficient (CDN needed, public access, versioning), migrating to S3 or R2 requires changing `config/storage.yml` and moving existing files — Active Storage abstracts the rest.
 - Object versioning and lifecycle policies are not supported on Railway Buckets (as of 2025).

@@ -29,6 +29,15 @@
 
 <h2><%= t(".record_payment") %></h2>
 <%= form_with model: @payment, url: loan_payments_path(@loan), multipart: true do |f| %>
+  <% if @payment.errors.any? %>
+    <div id="errors">
+      <ul>
+        <% @payment.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
   <div class="field">
     <%= f.label :amount, class: "field__label" %>
     <div class="field__control">
@@ -38,7 +47,7 @@
   <div class="field">
     <%= f.label :date, class: "field__label" %>
     <div class="field__control">
-      <%= f.date_field :date, value: Date.current, class: "field__input" %>
+      <%= f.date_field :date, class: "field__input" %>
     </div>
   </div>
   <div class="field">

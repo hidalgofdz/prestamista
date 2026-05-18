@@ -113,6 +113,23 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   end
 
+  test "lender records a payment with proof attachment" do
+    proof = fixture_file_upload("sample.jpg", "image/jpeg")
+
+    post loan_payments_path(@loan), params: {
+      payment: { amount: "933.33", date: "2026-06-01", proof: proof }
+    }
+
+    assert_response :redirect
+    follow_redirect!
+
+    assert_response :success
+    payment = @loan.payments.last
+    assert payment.proof.attached?
+    assert_equal "image/jpeg", payment.proof.content_type
+    assert_select ".payment-list__proof-thumb"
+  end
+
   test "lender cannot record payment on another account's loan" do
     other_loan = loans(:other_account_loan)
 

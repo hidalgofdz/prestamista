@@ -9,7 +9,7 @@ class Loans::PaymentsController < ApplicationController
     if @payment.save
       redirect_to loan_path(@loan)
     else
-      @payments = @loan.payments.order(date: :desc, created_at: :desc)
+      @payments = @loan.payments.with_attached_proof.order(date: :desc, created_at: :desc)
       render "loans/show", status: :unprocessable_entity
     end
   end

@@ -2,6 +2,7 @@ class Payment < ApplicationRecord
   belongs_to :account, default: -> { loan.account }
   belongs_to :loan
 
+  attribute :date, :date, default: -> { Date.current }
   attribute :principal_applied, :decimal, default: 0
   attribute :interest_applied, :decimal, default: 0
 
@@ -13,7 +14,6 @@ class Payment < ApplicationRecord
   validates :amount, presence: true, numericality: { greater_than: 0 }
   validates :date, presence: true
 
-  before_validation :set_date
   before_validation :apply_to_interest_and_principal
 
   validate :amount_does_not_exceed_balance
@@ -22,10 +22,6 @@ class Payment < ApplicationRecord
   validate :proof_size_acceptable
 
   private
-  def set_date
-    self.date ||= Date.current
-  end
-
   def apply_to_interest_and_principal
     return unless loan && amount.present? && amount > 0
 

@@ -28,4 +28,4 @@
 
 ## Technical Notes
 
-- **Active Storage content-type validation is safe against spoofing.** During `attach`, Active Storage calls `unfurl(io, identify: true)` which runs `Marcel::MimeType.for` on the raw IO bytes — the blob's `content_type` is set from magic-byte detection, not the browser-declared MIME header. Validating `proof.content_type` in the model is therefore checking the Marcel-detected type, not user input.
+- **Active Storage content-type detection uses Marcel** which inspects magic bytes first, but may fall back to filename extension or declared content type when magic bytes are inconclusive. Validating `proof.content_type` is a reasonable defense layer for the allowed file types (JPEG, PNG, WebP, HEIC, PDF — all have strong magic byte signatures), but should not be treated as a guarantee against all spoofing scenarios.

@@ -17,7 +17,7 @@ en:
               in_future: "cannot be in the future"
             proof:
               invalid_content_type: "must be a JPEG, PNG, WebP, HEIC, or PDF"
-              too_large: "must be less than 10 MB"
+              too_large: "must be 10 MB or less"
     models:
       borrower:
         one: "Borrower"

@@ -17,7 +17,7 @@ es-MX:
               in_future: "no puede ser en el futuro"
             proof:
               invalid_content_type: "debe ser JPEG, PNG, WebP, HEIC o PDF"
-              too_large: "debe ser menor a 10 MB"
+              too_large: "debe ser de 10 MB o menos"
     models:
       borrower:
         one: "Prestatario"
