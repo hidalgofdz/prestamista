@@ -326,6 +326,110 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     assert dates.first.include?("julio") || dates.first.include?("07"), "Expected July first, got: #{dates.first}"
   end
 
+  test "lender edits a payment date and interest split is recalculated" do
+    post loan_payments_path(@loan), params: {
+      payment: { amount: "933.33", date: "2026-06-01" }
+    }
+
+    payment = @loan.payments.last
+    original_interest = payment.interest_applied
+
+    patch loan_payment_path(@loan, payment), params: {
+      payment: { date: "2026-06-15" }
+    }
+
+    assert_redirected_to loan_path(@loan)
+    follow_redirect!
+
+    assert_response :success
+    payment.reload
+    assert_equal original_interest, payment.interest_applied
+    assert_select "#payments .payment-list__amount", /933.33/
+  end
+
+  test "editing a payment cascades recalculation to subsequent payments" do
+    post loan_payments_path(@loan), params: {
+      payment: { amount: "933.33", date: "2026-06-01" }
+    }
+    post loan_payments_path(@loan), params: {
+      payment: { amount: "933.33", date: "2026-07-01" }
+    }
+
+    first_payment = @loan.payments.order(:date).first
+    second_payment = @loan.payments.order(:date).last
+
+    patch loan_payment_path(@loan, first_payment), params: {
+      payment: { amount: "500" }
+    }
+
+    assert_redirected_to loan_path(@loan)
+    follow_redirect!
+
+    assert_response :success
+
+    second_payment.reload
+    assert_in_delta 96.00, second_payment.interest_applied.to_f, 0.01
+    assert_in_delta 837.33, second_payment.principal_applied.to_f, 0.01
+
+    assert_select "dd p", /8,762\.67/
+  end
+
+  test "editing a payment date reorders payments and recalculates splits" do
+    post loan_payments_path(@loan), params: {
+      payment: { amount: "500", date: "2026-06-15" }
+    }
+    post loan_payments_path(@loan), params: {
+      payment: { amount: "933.33", date: "2026-07-01" }
+    }
+
+    first_payment = @loan.payments.find_by(date: "2026-06-15")
+    second_payment = @loan.payments.find_by(date: "2026-07-01")
+
+    patch loan_payment_path(@loan, first_payment), params: {
+      payment: { date: "2026-07-15" }
+    }
+
+    assert_redirected_to loan_path(@loan)
+    follow_redirect!
+
+    assert_response :success
+
+    second_payment.reload
+    assert_in_delta 100.00, second_payment.interest_applied.to_f, 0.01
+
+    first_payment.reload
+    assert_equal Date.new(2026, 7, 15), first_payment.date
+  end
+
+  test "edit rejects amount that exceeds remaining balance" do
+    sign_in users(:edit_lender)
+    loan = loans(:edit_loan)
+    payment = payments(:edit_payment)
+
+    patch loan_payment_path(loan, payment), params: {
+      payment: { amount: "15000" }
+    }
+
+    assert_response :unprocessable_entity
+  end
+
+  test "lender edits a payment to a lower amount and sees updated split and balance" do
+    sign_in users(:edit_lender)
+    loan = loans(:edit_loan)
+    payment = payments(:edit_payment)
+
+    patch loan_payment_path(loan, payment), params: {
+      payment: { amount: "500", date: "2026-06-01" }
+    }
+
+    assert_redirected_to loan_path(loan)
+    follow_redirect!
+
+    assert_response :success
+    assert_select "#payments .payment-list__split", /Capital.*\$400\.00.*Interés.*\$100\.00/
+    assert_select "dd p", /9,600\.00/
+  end
+
   test "lender cannot edit another account's payment" do
     other_loan = loans(:other_account_loan)
     other_payment = payments(:other_account_payment)
