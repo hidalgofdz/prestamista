@@ -14,12 +14,12 @@ Rails.application.routes.draw do
   resources :borrowers
   resources :loans do
     scope module: :loans do
-      resources :payments, only: %i[create]
+      resources :payments, only: %i[create edit update]
     end
   end
 
   resources :payments, only: [] do
-    resource :proof, only: :show, module: :payments
+    resource :proof, only: %i[show destroy], module: :payments
   end
 
   scope module: :loans, path: "loans", as: :loans do

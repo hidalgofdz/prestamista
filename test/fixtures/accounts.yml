@@ -10,6 +10,14 @@ proof_account:
   id: "0000000000000000000000097"
   name: Proof Lender
 
+edit_account:
+  id: "0000000000000000000000096"
+  name: Edit Lender
+
+nearly_paid_account:
+  id: "0000000000000000000000095"
+  name: Nearly Paid Lender
+
 two:
   id: "0000000000000000000000099"
   name: Other Lender

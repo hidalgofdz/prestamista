@@ -19,6 +19,11 @@ class Payments::ProofsController < ApplicationController
     end
   end
 
+  def destroy
+    @payment.proof.purge
+    redirect_to loan_path(@payment.loan)
+  end
+
   private
   def set_payment
     @payment = @account.payments.find(params[:payment_id])

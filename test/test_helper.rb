@@ -15,9 +15,17 @@ module ActiveSupport
 end
 
 class ActionDispatch::IntegrationTest
+  parallelize_setup do |i|
+    ActiveStorage::Blob.service.root = "#{ActiveStorage::Blob.service.root}-#{i}"
+  end
+
+  def after_teardown
+    super
+    FileUtils.rm_rf(ActiveStorage::Blob.service.root)
+  end
+
   def sign_in(user)
-    session = sessions(:hidalgo_session)
-    cookies[:session_id] = session.id
+    sign_in_as(user)
   end
 
   def sign_in_as(user)

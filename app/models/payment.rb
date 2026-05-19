@@ -1,6 +1,6 @@
 class Payment < ApplicationRecord
   belongs_to :account, default: -> { loan.account }
-  belongs_to :loan
+  belongs_to :loan, touch: true
 
   attribute :date, :date, default: -> { Date.current }
   attribute :principal_applied, :decimal, default: 0
@@ -16,12 +16,29 @@ class Payment < ApplicationRecord
   validates :amount, presence: true, numericality: { greater_than: 0 }
   validates :date, presence: true
 
-  before_validation :apply_to_interest_and_principal
+  before_validation :apply_to_interest_and_principal, on: :create
 
-  validate :amount_does_not_exceed_balance
+  validate :amount_does_not_exceed_balance, on: :create
   validate :date_not_in_future
   validate :proof_content_type_acceptable
   validate :proof_size_acceptable
+
+  # Updates this payment's attrs and recalculates all payment splits on the loan
+  # in chronological order. Returns false if this payment or any downstream payment
+  # becomes invalid — the entire operation rolls back via the wrapping transaction.
+  def update_and_recalculate(attrs)
+    transaction do
+      update!(attrs)
+      loan.recalculate_payments
+    end
+    true
+  rescue ActiveRecord::RecordInvalid => e
+    errors.add(:base, :downstream_payment_invalid) unless e.record == self
+    false
+  rescue Loan::PaymentExceedsBalance
+    errors.add(:base, :downstream_payment_invalid)
+    false
+  end
 
   private
   def apply_to_interest_and_principal
@@ -33,9 +50,9 @@ class Payment < ApplicationRecord
   end
 
   def amount_does_not_exceed_balance
-    return unless loan && amount.present?
+    return unless loan && principal_applied.present?
 
-    if amount > loan.remaining_balance(excluding: self)
+    if principal_applied > loan.remaining_balance(excluding: self)
       errors.add(:amount, :exceeds_balance)
     end
   end

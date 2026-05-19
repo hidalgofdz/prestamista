@@ -2,6 +2,7 @@ class Loans::PaymentsController < ApplicationController
   include AccountScoped
 
   before_action :set_loan
+  before_action :set_payment, only: %i[edit update]
 
   def create
     @payment = @loan.payments.new(payment_params)
@@ -14,9 +15,24 @@ class Loans::PaymentsController < ApplicationController
     end
   end
 
+  def edit
+  end
+
+  def update
+    if @payment.update_and_recalculate(payment_params)
+      redirect_to loan_path(@loan)
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
   private
   def set_loan
     @loan = @account.loans.find(params[:loan_id])
+  end
+
+  def set_payment
+    @payment = @loan.payments.find(params[:id])
   end
 
   def payment_params

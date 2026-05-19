@@ -13,6 +13,8 @@ es-MX:
           attributes:
             amount:
               exceeds_balance: "excede el saldo restante"
+            base:
+              downstream_payment_invalid: "este cambio haría que un pago posterior exceda el saldo restante"
             date:
               in_future: "no puede ser en el futuro"
             proof:
@@ -34,6 +36,13 @@ es-MX:
         date: "Fecha"
         proof: "Comprobante de pago"
   loans:
+    payments:
+      edit:
+        title: "Editar pago"
+        proof_label: "Comprobante de pago (opcional)"
+        remove_proof: "Eliminar"
+        submit: "Guardar cambios"
+        back: "Regresar"
     index:
       title: "Préstamos"
       new: "Nuevo préstamo"
@@ -72,6 +81,8 @@ es-MX:
       payment_amount_label: "Monto del pago"
       payment_proof_label: "Ver comprobante del pago de %{amount} del %{date}"
       payment_pdf_label: "PDF"
+      edit_payment: "Editar pago"
+      edit_payment_label: "Editar pago de %{amount} del %{date}"
       edit: "Editar"
       back: "Regresar"
     new:

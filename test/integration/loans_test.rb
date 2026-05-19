@@ -257,4 +257,22 @@ class LoansTest < ActionDispatch::IntegrationTest
     assert_select ".loan-card__amount", /10,000/
     assert_select ".loan-card__borrower", text: /Aaron/, minimum: 2
   end
+
+  test "two loans for same borrower are distinguishable by start date" do
+    Loan.create!(
+      account: accounts(:one),
+      borrower: @borrower,
+      amount: 10_000,
+      annual_interest_rate: 12,
+      term_months: 12,
+      start_date: Date.new(2026, 3, 10)
+    )
+
+    get loans_path
+
+    assert_response :success
+    assert_select ".loan-card__borrower", text: /Aaron/, minimum: 2
+    assert_select ".loan-card__subtitle", /10\/03\/2026/
+    assert_select ".loan-card__subtitle", /01\/05\/2026/
+  end
 end

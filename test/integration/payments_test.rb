@@ -114,7 +114,7 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     assert_select "#errors li", /Fecha/
   end
 
-  test "payment cannot exceed remaining balance" do
+  test "payment whose principal exceeds remaining balance is rejected" do
     assert_no_difference "Payment.count" do
       post loan_payments_path(@loan), params: {
         payment: { amount: "15000", date: "2026-06-01" }
@@ -123,6 +123,24 @@ class PaymentsTest < ActionDispatch::IntegrationTest
 
     assert_response :unprocessable_entity
     assert_select "dd p", /10,000.00/
+  end
+
+  test "payment covering remaining balance plus interest is accepted" do
+    sign_in users(:nearly_paid_lender)
+    loan = loans(:nearly_paid_loan)
+    balance = loan.remaining_balance.to_f
+    interest = (balance * loan.annual_interest_rate / 100 / 12).to_f
+    final_amount = (balance + interest).ceil(2)
+
+    assert final_amount > balance, "Test requires amount > remaining balance"
+
+    post loan_payments_path(loan), params: {
+      payment: { amount: final_amount.to_s, date: "2026-03-01" }
+    }
+
+    assert_response :redirect
+    follow_redirect!
+    assert_select ".paid-off"
   end
 
   test "lender records a payment with proof attachment" do
@@ -183,6 +201,123 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     assert_select "[data-testid='next-payment']", count: 0
   end
 
+  # --- Edit Payment Tests ---
+
+  test "lender edits a payment amount and sees updated split and balance" do
+    sign_in users(:edit_lender)
+    loan = loans(:edit_loan)
+    payment = payments(:edit_payment)
+
+    patch loan_payment_path(loan, payment), params: {
+      payment: { amount: "1200", date: "2026-06-01" }
+    }
+
+    assert_redirected_to loan_path(loan)
+    follow_redirect!
+
+    assert_response :success
+    assert_select "#payments .payment-list__split", /Capital.*\$1,100\.00.*Interés.*\$100\.00/
+    assert_select "dd p", /8,900\.00/
+  end
+
+  test "edit rejects zero amount" do
+    sign_in users(:edit_lender)
+
+    patch loan_payment_path(loans(:edit_loan), payments(:edit_payment)), params: {
+      payment: { amount: "0" }
+    }
+
+    assert_response :unprocessable_entity
+  end
+
+  test "edit rejects future date" do
+    sign_in users(:edit_lender)
+
+    patch loan_payment_path(loans(:edit_loan), payments(:edit_payment)), params: {
+      payment: { date: "2026-07-16" }
+    }
+
+    assert_response :unprocessable_entity
+  end
+
+  test "edit rejects amount that would make downstream payment exceed balance" do
+    post loan_payments_path(@loan), params: {
+      payment: { amount: "100", date: "2026-06-01" }
+    }
+    post loan_payments_path(@loan), params: {
+      payment: { amount: "10000", date: "2026-07-01" }
+    }
+
+    first_payment = @loan.payments.order(:date).first
+    patch loan_payment_path(@loan, first_payment), params: {
+      payment: { amount: "5000" }
+    }
+
+    assert_response :unprocessable_entity
+    assert_select "#errors"
+  end
+
+  test "editing a payment on a paid-off loan can reactivate it" do
+    post loan_payments_path(@loan), params: {
+      payment: { amount: "933.33", date: "2026-06-01" }
+    }
+    post loan_payments_path(@loan), params: {
+      payment: { amount: "9166.67", date: "2026-06-15" }
+    }
+
+    get loan_path(@loan)
+    assert_select ".paid-off"
+
+    last_payment = @loan.payments.order(date: :desc).first
+    patch loan_payment_path(@loan, last_payment), params: {
+      payment: { amount: "1000" }
+    }
+
+    assert_redirected_to loan_path(@loan)
+    follow_redirect!
+    assert_select ".paid-off", count: 0
+  end
+
+  test "editing a payment with new proof replaces old proof" do
+    proof = fixture_file_upload("sample.jpg", "image/jpeg")
+    post loan_payments_path(@loan), params: {
+      payment: { amount: "933.33", date: "2026-06-01", proof: proof }
+    }
+
+    payment = @loan.payments.last
+    assert payment.proof.attached?
+    old_blob_id = payment.proof.blob.id
+
+    new_proof = fixture_file_upload("sample.jpg", "image/jpeg")
+    patch loan_payment_path(@loan, payment), params: {
+      payment: { amount: "933.33", proof: new_proof }
+    }
+
+    assert_redirected_to loan_path(@loan)
+    payment.reload
+    assert payment.proof.attached?
+    assert_not_equal old_blob_id, payment.proof.blob.id
+  end
+
+  test "editing without uploading proof preserves existing proof" do
+    proof = fixture_file_upload("sample.jpg", "image/jpeg")
+    post loan_payments_path(@loan), params: {
+      payment: { amount: "933.33", date: "2026-06-01", proof: proof }
+    }
+
+    payment = @loan.payments.last
+    old_blob_id = payment.proof.blob.id
+
+    patch loan_payment_path(@loan, payment), params: {
+      payment: { amount: "1000" }
+    }
+
+    assert_redirected_to loan_path(@loan)
+    payment.reload
+    assert payment.proof.attached?
+    assert_equal old_blob_id, payment.proof.blob.id
+  end
+
   test "payment history is in reverse chronological order" do
     post loan_payments_path(@loan), params: {
       payment: { amount: "933.33", date: "2026-06-01" }
@@ -197,5 +332,120 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     dates = css_select("#payments .payment-list__date").map(&:text)
     assert_equal 2, dates.length
     assert dates.first.include?("julio") || dates.first.include?("07"), "Expected July first, got: #{dates.first}"
+  end
+
+  test "lender edits a payment date and interest split is recalculated" do
+    post loan_payments_path(@loan), params: {
+      payment: { amount: "933.33", date: "2026-06-01" }
+    }
+
+    payment = @loan.payments.last
+    original_interest = payment.interest_applied
+
+    patch loan_payment_path(@loan, payment), params: {
+      payment: { date: "2026-06-15" }
+    }
+
+    assert_redirected_to loan_path(@loan)
+    follow_redirect!
+
+    assert_response :success
+    payment.reload
+    assert_equal original_interest, payment.interest_applied
+    assert_select "#payments .payment-list__amount", /933.33/
+  end
+
+  test "editing a payment cascades recalculation to subsequent payments" do
+    post loan_payments_path(@loan), params: {
+      payment: { amount: "933.33", date: "2026-06-01" }
+    }
+    post loan_payments_path(@loan), params: {
+      payment: { amount: "933.33", date: "2026-07-01" }
+    }
+
+    first_payment = @loan.payments.order(:date).first
+    second_payment = @loan.payments.order(:date).last
+
+    patch loan_payment_path(@loan, first_payment), params: {
+      payment: { amount: "500" }
+    }
+
+    assert_redirected_to loan_path(@loan)
+    follow_redirect!
+
+    assert_response :success
+
+    second_payment.reload
+    assert_in_delta 96.00, second_payment.interest_applied.to_f, 0.01
+    assert_in_delta 837.33, second_payment.principal_applied.to_f, 0.01
+
+    assert_select "dd p", /8,762\.67/
+  end
+
+  test "editing a payment date reorders payments and recalculates splits" do
+    post loan_payments_path(@loan), params: {
+      payment: { amount: "500", date: "2026-06-15" }
+    }
+    post loan_payments_path(@loan), params: {
+      payment: { amount: "933.33", date: "2026-07-01" }
+    }
+
+    first_payment = @loan.payments.find_by(date: "2026-06-15")
+    second_payment = @loan.payments.find_by(date: "2026-07-01")
+
+    patch loan_payment_path(@loan, first_payment), params: {
+      payment: { date: "2026-07-15" }
+    }
+
+    assert_redirected_to loan_path(@loan)
+    follow_redirect!
+
+    assert_response :success
+
+    second_payment.reload
+    assert_in_delta 100.00, second_payment.interest_applied.to_f, 0.01
+
+    first_payment.reload
+    assert_equal Date.new(2026, 7, 15), first_payment.date
+  end
+
+  test "edit rejects amount that exceeds remaining balance" do
+    sign_in users(:edit_lender)
+    loan = loans(:edit_loan)
+    payment = payments(:edit_payment)
+
+    patch loan_payment_path(loan, payment), params: {
+      payment: { amount: "15000" }
+    }
+
+    assert_response :unprocessable_entity
+  end
+
+  test "lender edits a payment to a lower amount and sees updated split and balance" do
+    sign_in users(:edit_lender)
+    loan = loans(:edit_loan)
+    payment = payments(:edit_payment)
+
+    patch loan_payment_path(loan, payment), params: {
+      payment: { amount: "500", date: "2026-06-01" }
+    }
+
+    assert_redirected_to loan_path(loan)
+    follow_redirect!
+
+    assert_response :success
+    assert_select "#payments .payment-list__split", /Capital.*\$400\.00.*Interés.*\$100\.00/
+    assert_select "dd p", /9,600\.00/
+  end
+
+  test "lender cannot edit another account's payment" do
+    other_loan = loans(:other_account_loan)
+    other_payment = payments(:other_account_payment)
+
+    patch loan_payment_path(other_loan, other_payment), params: {
+      payment: { amount: "500" }
+    }
+
+    assert_response :not_found
   end
 end

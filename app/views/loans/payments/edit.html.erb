@@ -1,0 +1,50 @@
+<h1><%= t(".title") %></h1>
+
+<%= form_with model: [@loan, @payment], url: loan_payment_path(@loan, @payment), multipart: true do |f| %>
+  <% if @payment.errors.any? %>
+    <div id="errors">
+      <ul>
+        <% @payment.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="field">
+    <%= f.label :amount, class: "field__label" %>
+    <div class="field__control">
+      <%= f.number_field :amount, step: "0.01", class: "field__input" %>
+    </div>
+  </div>
+  <div class="field">
+    <%= f.label :date, class: "field__label" %>
+    <div class="field__control">
+      <%= f.date_field :date, class: "field__input" %>
+    </div>
+  </div>
+  <div class="field">
+    <%= f.label :proof, t(".proof_label"), class: "field__label" %>
+    <% if @payment.proof.attached? %>
+      <div class="payment-edit__current-proof">
+        <% if @payment.proof.content_type == "application/pdf" %>
+          <%= link_to payment_proof_path(@payment), class: "payment-list__proof", aria: { label: t("loans.show.payment_proof_label", amount: currency(@payment.amount), date: l(@payment.date)) } do %>
+            <span class="payment-list__proof-pdf"><%= t("loans.show.payment_pdf_label") %></span>
+          <% end %>
+        <% else %>
+          <%= link_to payment_proof_path(@payment), class: "payment-list__proof", aria: { label: t("loans.show.payment_proof_label", amount: currency(@payment.amount), date: l(@payment.date)) } do %>
+            <%= image_tag payment_proof_path(@payment, variant: :thumb), class: "payment-list__proof-thumb", alt: "" %>
+          <% end %>
+        <% end %>
+        <%= link_to t(".remove_proof"), payment_proof_path(@payment), data: { turbo_method: :delete }, class: "btn btn--ghost btn--sm" %>
+      </div>
+    <% end %>
+    <div class="field__control">
+      <%= f.file_field :proof, accept: "image/jpeg,image/png,image/webp,image/heic,application/pdf", class: "field__input" %>
+    </div>
+  </div>
+  <div>
+    <%= f.submit t(".submit"), class: "btn btn--primary" %>
+  </div>
+<% end %>
+
+<%= link_to t(".back"), loan_path(@loan), class: "btn btn--ghost" %>

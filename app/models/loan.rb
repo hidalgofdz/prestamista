@@ -1,4 +1,6 @@
 class Loan < ApplicationRecord
+  class PaymentExceedsBalance < StandardError; end
+
   belongs_to :account, default: -> { borrower.account }
   belongs_to :borrower, touch: true
   has_many :payments, dependent: :restrict_with_error
@@ -61,7 +63,42 @@ class Loan < ApplicationRecord
     remaining_balance <= 0
   end
 
+  def recalculate_payments
+    ordered = payments.reload.order(date: :asc, created_at: :asc, id: :asc).to_a
+    return if ordered.empty?
+
+    transaction do
+      compute_allocations(ordered)
+
+      # Safe to bypass validations: compute_allocations already enforces
+      # principal ≤ running_balance for every payment in order.
+      Payment.upsert_all(
+        ordered.map { |p|
+          { id: p.id, account_id: p.account_id, loan_id: p.loan_id,
+            date: p.date, amount: p.amount,
+            interest_applied: p.interest_applied, principal_applied: p.principal_applied }
+        },
+        update_only: %i[interest_applied principal_applied]
+      )
+      touch
+    end
+  end
+
   private
+  def compute_allocations(ordered)
+    running_balance = amount
+
+    ordered.each_with_index do |payment, index|
+      interest_due = interest_for_running_balance(payment, running_balance, ordered, index)
+      payment.interest_applied = [ payment.amount, interest_due ].min
+      payment.principal_applied = payment.amount - payment.interest_applied
+
+      raise PaymentExceedsBalance, payment if payment.principal_applied > running_balance
+
+      running_balance -= payment.principal_applied
+    end
+  end
+
   def period_covered?(period_payments)
     if period_payments.empty?
       false
@@ -94,6 +131,18 @@ class Loan < ApplicationRecord
     months_elapsed = ((date.year - start_date.year) * 12) + (date.month - start_date.month)
     months_elapsed = [ months_elapsed, 0 ].max
     start_date >> months_elapsed
+  end
+
+  def interest_for_running_balance(payment, running_balance, ordered, current_index)
+    period_start = period_start_for(payment.date)
+    period_end = period_end_for(period_start)
+    period_interest = running_balance * monthly_rate
+
+    already_paid = ordered[0...current_index]
+      .select { |p| p.date >= period_start && p.date <= period_end }
+      .sum(&:interest_applied)
+
+    [ period_interest - already_paid, 0 ].max
   end
 
   def period_end_for(period_start)
