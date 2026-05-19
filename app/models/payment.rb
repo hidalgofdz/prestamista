@@ -50,9 +50,9 @@ class Payment < ApplicationRecord
   end
 
   def amount_does_not_exceed_balance
-    return unless loan && amount.present?
+    return unless loan && principal_applied.present?
 
-    if amount > loan.remaining_balance(excluding: self)
+    if principal_applied > loan.remaining_balance(excluding: self)
       errors.add(:amount, :exceeds_balance)
     end
   end

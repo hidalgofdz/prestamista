@@ -43,6 +43,15 @@ edit_payment:
   principal_applied: 833.33
   date: 2026-06-01
 
+nearly_paid_payment:
+  id: "0000000000000000000000026"
+  account_id: "0000000000000000000000095"
+  loan_id: "0000000000000000000000015"
+  amount: 960.00
+  interest_applied: 10.00
+  principal_applied: 950.00
+  date: 2026-02-01
+
 other_account_payment:
   id: "0000000000000000000000023"
   account_id: "0000000000000000000000099"

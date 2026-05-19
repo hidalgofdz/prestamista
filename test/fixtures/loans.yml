@@ -34,6 +34,15 @@ edit_loan:
   term_months: 12
   start_date: 2026-05-01
 
+nearly_paid_loan:
+  id: "0000000000000000000000015"
+  account_id: "0000000000000000000000095"
+  borrower_id: "0000000000000000000000007"
+  amount: 1000.00
+  annual_interest_rate: 12.00
+  term_months: 12
+  start_date: 2026-01-01
+
 other_account_loan:
   id: "0000000000000000000000011"
   account_id: "0000000000000000000000099"

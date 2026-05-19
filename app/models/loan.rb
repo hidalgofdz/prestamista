@@ -70,10 +70,8 @@ class Loan < ApplicationRecord
     transaction do
       compute_allocations(ordered)
 
-      # upsert_all bypasses ActiveRecord validations and callbacks, but none of the
-      # Payment validations apply here: amount_does_not_exceed_balance only fires on
-      # amount_changed? or new_record?, and the principal ≤ running_balance invariant
-      # is enforced by compute_allocations. One bulk write for all payments.
+      # Safe to bypass validations: compute_allocations already enforces
+      # principal ≤ running_balance for every payment in order.
       Payment.upsert_all(
         ordered.map { |p|
           { id: p.id, account_id: p.account_id, loan_id: p.loan_id,

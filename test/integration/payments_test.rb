@@ -114,7 +114,7 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     assert_select "#errors li", /Fecha/
   end
 
-  test "payment cannot exceed remaining balance" do
+  test "payment whose principal exceeds remaining balance is rejected" do
     assert_no_difference "Payment.count" do
       post loan_payments_path(@loan), params: {
         payment: { amount: "15000", date: "2026-06-01" }
@@ -123,6 +123,24 @@ class PaymentsTest < ActionDispatch::IntegrationTest
 
     assert_response :unprocessable_entity
     assert_select "dd p", /10,000.00/
+  end
+
+  test "payment covering remaining balance plus interest is accepted" do
+    sign_in users(:nearly_paid_lender)
+    loan = loans(:nearly_paid_loan)
+    balance = loan.remaining_balance.to_f
+    interest = (balance * loan.annual_interest_rate / 100 / 12).to_f
+    final_amount = (balance + interest).ceil(2)
+
+    assert final_amount > balance, "Test requires amount > remaining balance"
+
+    post loan_payments_path(loan), params: {
+      payment: { amount: final_amount.to_s, date: "2026-03-01" }
+    }
+
+    assert_response :redirect
+    follow_redirect!
+    assert_select ".paid-off"
   end
 
   test "lender records a payment with proof attachment" do
