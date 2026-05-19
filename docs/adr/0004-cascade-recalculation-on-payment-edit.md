@@ -21,7 +21,7 @@ Option 3: cascade recalculation with transactional rollback on downstream valida
 When a payment is updated:
 
 1. Save the edited payment's new attributes (amount, date).
-2. Collect all payments on the loan in chronological order (by date, then creation order for same-date ties).
+2. Collect all payments on the loan in chronological order (by date, then `created_at`, then `id` as a deterministic tiebreaker).
 3. Walk the list from the beginning, recomputing each payment's `interest_applied` and `principal_applied` against the cumulative balance at that point.
 4. Validate each recomputed payment. If any fails (amount exceeds remaining balance, etc.), roll back the entire transaction and surface the error on the edited payment's form.
 5. Save all recomputed payments in a single transaction and touch the loan's `updated_at` within the same transaction — so HTTP caching (ETags, `fresh_when`) always reflects the latest recalculation.

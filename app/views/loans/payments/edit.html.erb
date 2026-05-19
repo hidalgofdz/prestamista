@@ -27,7 +27,7 @@
     <% if @payment.proof.attached? %>
       <div class="payment-edit__current-proof">
         <% if @payment.proof.content_type == "application/pdf" %>
-          <%= link_to payment_proof_path(@payment), class: "payment-list__proof" do %>
+          <%= link_to payment_proof_path(@payment), class: "payment-list__proof", aria: { label: t("loans.show.payment_proof_label", amount: currency(@payment.amount), date: l(@payment.date)) } do %>
             <span class="payment-list__proof-pdf"><%= t("loans.show.payment_pdf_label") %></span>
           <% end %>
         <% else %>

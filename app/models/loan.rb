@@ -64,7 +64,7 @@ class Loan < ApplicationRecord
   end
 
   def recalculate_payments
-    ordered = payments.reload.order(date: :asc, created_at: :asc).to_a
+    ordered = payments.reload.order(date: :asc, created_at: :asc, id: :asc).to_a
     return if ordered.empty?
 
     transaction do

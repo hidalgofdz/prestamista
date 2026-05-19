@@ -82,6 +82,7 @@ en:
       payment_proof_label: "View proof for %{amount} payment on %{date}"
       payment_pdf_label: "PDF"
       edit_payment: "Edit payment"
+      edit_payment_label: "Edit %{amount} payment on %{date}"
       edit: "Edit"
       back: "Back"
     new:

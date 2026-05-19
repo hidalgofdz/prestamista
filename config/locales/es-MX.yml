@@ -82,6 +82,7 @@ es-MX:
       payment_proof_label: "Ver comprobante del pago de %{amount} del %{date}"
       payment_pdf_label: "PDF"
       edit_payment: "Editar pago"
+      edit_payment_label: "Editar pago de %{amount} del %{date}"
       edit: "Editar"
       back: "Regresar"
     new:

@@ -20,5 +20,5 @@
   <p class="payment-list__split">
     <%= t("loans.show.payment_principal") %>: <%= currency(payment.principal_applied) %> · <%= t("loans.show.payment_interest") %>: <%= currency(payment.interest_applied) %>
   </p>
-  <%= link_to t("loans.show.edit_payment"), edit_loan_payment_path(payment.loan, payment), class: "payment-list__edit" %>
+  <%= link_to t("loans.show.edit_payment"), edit_loan_payment_path(payment.loan, payment), class: "payment-list__edit", aria: { label: t("loans.show.edit_payment_label", amount: currency(payment.amount), date: l(payment.date)) } %>
 </li>

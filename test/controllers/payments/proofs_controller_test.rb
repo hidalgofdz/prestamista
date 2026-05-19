@@ -36,7 +36,7 @@ class Payments::ProofsControllerTest < ActionDispatch::IntegrationTest
 
   test "deletes proof from payment" do
     @no_proof_payment.proof.attach(
-      io: File.open(file_fixture("sample.jpg")),
+      io: fixture_file_upload("sample.jpg", "image/jpeg"),
       filename: "sample.jpg",
       content_type: "image/jpeg"
     )
@@ -51,7 +51,7 @@ class Payments::ProofsControllerTest < ActionDispatch::IntegrationTest
 
   test "deleting proof does not change payment amount or date" do
     @no_proof_payment.proof.attach(
-      io: File.open(file_fixture("sample.jpg")),
+      io: fixture_file_upload("sample.jpg", "image/jpeg"),
       filename: "sample.jpg",
       content_type: "image/jpeg"
     )
