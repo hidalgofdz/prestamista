@@ -36,9 +36,9 @@
 *** And Payment 1 (now chronologically second) is recalculated against the updated balance
 ** Scenario: Edit is rejected when downstream payment becomes invalid
 *** Given the loan has two recorded payments:
-**** Payment 1: $933.33 on month 1
-**** Payment 2: $9,000 on month 2
-*** When the lender edits Payment 1 amount from $933.33 to $200
+**** Payment 1: $100 on month 1
+**** Payment 2: $10,000 on month 2
+*** When the lender edits Payment 1 amount from $100 to $5,000
 *** Then the form shows a validation error that the change would make a subsequent payment exceed the remaining balance
 *** And no payments are modified
 ** Scenario: Lender replaces proof of payment

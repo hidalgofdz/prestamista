@@ -35,7 +35,7 @@
             <%= image_tag payment_proof_path(@payment, variant: :thumb), class: "payment-list__proof-thumb", alt: "" %>
           <% end %>
         <% end %>
-        <%= link_to t(".remove_proof"), payment_proof_path(@payment), data: { turbo_method: :delete }, class: "btn btn--ghost btn--small" %>
+        <%= link_to t(".remove_proof"), payment_proof_path(@payment), data: { turbo_method: :delete }, class: "btn btn--ghost btn--sm" %>
       </div>
     <% end %>
     <div class="field__control">

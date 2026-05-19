@@ -17,5 +17,5 @@ paths:
 - `_later`/`_now` convention for async/sync method pairs
 - Model methods are the public API that controllers call directly
 - Keep concerns narrowly focused on one behavior each
-- Callbacks for fire-and-forget side effects only: cache invalidation, broadcasting, search indexing
+- Callbacks for derived attributes (`before_validation`) and fire-and-forget side effects (cache invalidation, broadcasting, search indexing)
 - Explicit model methods for failable multi-record operations: when the operation can fail and needs error reporting, use a named method the controller calls directly, not a callback chain

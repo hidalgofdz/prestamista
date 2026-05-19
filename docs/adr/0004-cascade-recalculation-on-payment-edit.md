@@ -26,7 +26,7 @@ When a payment is updated:
 4. Validate each recomputed payment. If any fails (amount exceeds remaining balance, etc.), roll back the entire transaction and surface the error on the edited payment's form.
 5. Save all recomputed payments in a single transaction and touch the loan's `updated_at` within the same transaction — so HTTP caching (ETags, `fresh_when`) always reflects the latest recalculation.
 
-`Loan#recalculate_payments` owns its own transaction so it is safe to call standalone (e.g., from tests or future background jobs) as well as nested inside the outer transaction from `Payment#save_with_cascade_recalculation`. Rails uses savepoints for nesting.
+`Loan#recalculate_payments` owns its own `transaction` block so it reads clearly standalone (e.g., from tests or future background jobs). When called from `Payment#update_and_recalculate`, the inner `transaction` call joins the outer one by default (Rails only creates a savepoint with `requires_new: true`). This is the desired behavior — one atomic rollback for the entire edit-plus-recalculate operation.
 
 Date edits are allowed to reorder payments on the timeline. The recalculation processes payments in their new chronological order, so reordering is handled naturally without special-casing.
 

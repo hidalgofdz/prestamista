@@ -26,7 +26,7 @@
 - A **borrower cannot be deleted** if they have loans. Remove loans first (only possible if they have no payments).
 - A **payment date** must not be in the future. Backdating is allowed (to record payments received earlier).
 - **Editing a payment recalculates all subsequent payments** on that loan. Payments are processed in chronological order; each one's interest/principal split is recomputed against the balance at that point. If any downstream payment becomes invalid after recalculation (e.g., amount exceeds new remaining balance), the edit is rejected.
-- **Payments are editable without restrictions.** No time windows, no sequencing constraints, no special rules for paid-off loans. The lender owns their data.
+- **Payments have no time-window or sequencing restrictions on editing.** Any payment can be edited at any time, regardless of loan status (including paid-off). Standard validations still apply (positive amount, date not in future, amount within balance).
 - **Payment proof deletion** is a separate action from editing payment details.
 
 ## Technical Notes
