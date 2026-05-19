@@ -90,8 +90,8 @@ class Loan < ApplicationRecord
   def compute_allocations(ordered)
     running_balance = amount
 
-    ordered.each do |payment|
-      interest_due = interest_for_running_balance(payment, running_balance, ordered)
+    ordered.each_with_index do |payment, index|
+      interest_due = interest_for_running_balance(payment, running_balance, ordered, index)
       payment.interest_applied = [ payment.amount, interest_due ].min
       payment.principal_applied = payment.amount - payment.interest_applied
 
@@ -135,20 +135,16 @@ class Loan < ApplicationRecord
     start_date >> months_elapsed
   end
 
-  def interest_for_running_balance(payment, running_balance, ordered)
+  def interest_for_running_balance(payment, running_balance, ordered, current_index)
     period_start = period_start_for(payment.date)
     period_end = period_end_for(period_start)
     period_interest = running_balance * monthly_rate
 
-    already_paid = ordered
-      .select { |p| p != payment && p.date >= period_start && p.date <= period_end && chronologically_before?(p, payment, ordered) }
+    already_paid = ordered[0...current_index]
+      .select { |p| p.date >= period_start && p.date <= period_end }
       .sum(&:interest_applied)
 
     [ period_interest - already_paid, 0 ].max
-  end
-
-  def chronologically_before?(a, b, ordered)
-    ordered.index(a) < ordered.index(b)
   end
 
   def period_end_for(period_start)

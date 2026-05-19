@@ -18,7 +18,7 @@ class Payment < ApplicationRecord
 
   before_validation :apply_to_interest_and_principal, on: :create
 
-  validate :amount_does_not_exceed_balance, if: -> { amount_changed? || new_record? }
+  validate :amount_does_not_exceed_balance, on: :create
   validate :date_not_in_future
   validate :proof_content_type_acceptable
   validate :proof_size_acceptable

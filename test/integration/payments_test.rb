@@ -300,16 +300,6 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     assert_equal old_blob_id, payment.proof.blob.id
   end
 
-  test "recording a payment via Turbo Stream appends it to the payment list" do
-    post loan_payments_path(@loan),
-      params: { payment: { amount: "933.33", date: "2026-06-01" } },
-      headers: { "Accept" => "text/vnd.turbo-stream.html" }
-
-    assert_response :success
-    assert_equal "text/vnd.turbo-stream.html", response.media_type
-    assert_match "turbo-stream", response.body
-  end
-
   test "payment history is in reverse chronological order" do
     post loan_payments_path(@loan), params: {
       payment: { amount: "933.33", date: "2026-06-01" }

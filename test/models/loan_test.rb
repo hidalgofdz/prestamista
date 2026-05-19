@@ -155,6 +155,22 @@ class LoanTest < ActiveSupport::TestCase
     end
   end
 
+  test "update_and_recalculate succeeds when edit is valid after recalculation but exceeds stale balance" do
+    loan = loans(:active_loan)
+
+    travel_to Date.new(2026, 7, 1) do
+      payment1 = loan.payments.create!(amount: 100, date: Date.new(2026, 6, 1), account: loan.account)
+      loan.payments.create!(amount: 10_000, date: Date.new(2026, 7, 1), account: loan.account)
+
+      result = payment1.update_and_recalculate(amount: 150)
+
+      assert result, "Edit should succeed — recalculation makes it valid"
+      payment1.reload
+      assert_in_delta 100.00, payment1.interest_applied.to_f, 0.01
+      assert_in_delta 50.00, payment1.principal_applied.to_f, 0.01
+    end
+  end
+
   test "recalculate_payments raises when downstream payment exceeds balance" do
     loan = loans(:active_loan)
 

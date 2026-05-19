@@ -8,10 +8,7 @@ class Loans::PaymentsController < ApplicationController
     @payment = @loan.payments.new(payment_params)
 
     if @payment.save
-      respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to loan_path(@loan) }
-      end
+      redirect_to loan_path(@loan)
     else
       @payments = @loan.payments.with_attached_proof.order(date: :desc, created_at: :desc)
       render "loans/show", status: :unprocessable_entity
